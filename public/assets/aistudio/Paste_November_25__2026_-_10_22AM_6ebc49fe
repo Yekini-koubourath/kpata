@@ -1,0 +1,854 @@
+# MISSION COMPLÈTE : CONCEVOIR, DÉVELOPPER ET LIVRER KPATA — APPLICATION WEB FULL-STACK
+
+Tu agis comme une équipe senior autonome composée d'un architecte logiciel, d'un développeur frontend, d'un développeur backend, d'un ingénieur base de données, d'un expert UI/UX, d'un spécialiste cybersécurité et d'un ingénieur QA.
+
+Ta mission est de construire intégralement **KPATA**, une véritable plateforme web full-stack de gestion collaborative des dépenses, des contributions et des finances collectives.
+
+Tu dois réaliser le frontend, le backend, la base de données, les API, les règles métier, l'authentification, les paiements, les tests et la documentation technique.
+
+Il ne s'agit pas de produire une simple maquette, une démonstration visuelle ou un prototype avec des données fictives.
+
+Je veux une application réellement fonctionnelle, avec des données persistantes, des opérations sécurisées et des fonctionnalités connectées au backend.
+
+## 1. DOCUMENT DE RÉFÉRENCE OBLIGATOIRE
+
+Le cahier des charges KPATA Version 1.1 joint à cette conversation constitue le document de référence fonctionnel et métier du projet.
+
+Tu dois :
+- Lire et analyser l'intégralité du document avant de commencer.
+- Respecter les fonctionnalités, les règles de gestion et les contraintes techniques.
+- Ne supprimer aucune fonctionnalité importante.
+- Ne pas remplacer les besoins définis par des fonctionnalités imaginées.
+- Ne pas simplifier les règles financières au point de compromettre leur exactitude.
+- Utiliser les exemples du cahier des charges pour concevoir et tester les fonctionnalités.
+- Signaler clairement toute contradiction ou incompatibilité technique.
+
+Les instructions de ce prompt complètent le cahier des charges, notamment concernant FedaPay, l'architecture technique, la sécurité et le déploiement.
+
+## 2. PRÉSENTATION DU PRODUIT
+
+Nom : KPATA
+
+Positionnement : plateforme web de gestion collaborative des dépenses, contributions, cotisations, remboursements et budgets collectifs.
+
+Signature : « Ensemble, gérons mieux notre argent. »
+
+KPATA doit permettre à plusieurs personnes de gérer leurs finances communes dans des espaces indépendants appelés groupes.
+
+Les groupes peuvent représenter :
+- Une famille ou un foyer.
+- Un couple.
+- Une colocation.
+- Des étudiants.
+- Un groupe d'amis.
+- Une association.
+- Une organisation.
+- Une communauté.
+- Un voyage.
+- Un événement.
+- Un groupe professionnel.
+- Tout autre collectif ayant des dépenses ou des contributions communes.
+
+Le lancement se fait au Bénin, avec une architecture prévue pour une expansion progressive dans les autres pays africains.
+
+La plateforme est exclusivement web pour cette première version. Elle doit être responsive et parfaitement utilisable sur ordinateur, tablette et smartphone. Prévois une architecture PWA si cela est pertinent, mais ne développe pas une application mobile native.
+
+## 3. ARCHITECTURE TECHNIQUE IMPOSÉE
+
+Construis une véritable application compatible avec un déploiement sur Vercel.
+
+Technologies principales :
+
+- Next.js avec App Router.
+- React.
+- TypeScript strict.
+- Node.js pour les traitements serveur.
+- Tailwind CSS.
+- Prisma ORM.
+- PostgreSQL hébergé sur Neon.
+- Zod pour la validation.
+- Une bibliothèque de composants moderne et accessible.
+- Une bibliothèque de graphiques pour les statistiques.
+- Tests automatisés adaptés au projet.
+
+### Architecture
+
+Utilise une seule application Next.js full-stack.
+
+Le frontend et le backend doivent être organisés proprement dans le même projet.
+
+Utilise :
+- Les composants React pour l'interface.
+- Les Server Components lorsque cela est pertinent.
+- Les Client Components uniquement lorsque nécessaire.
+- Les Route Handlers Next.js pour les API.
+- Les Server Actions lorsque cela est pertinent.
+- Des services métier indépendants des composants.
+- Prisma pour les accès à PostgreSQL.
+
+Ne crée pas un serveur Express indépendant si cela n'est pas indispensable.
+
+Ne remplace pas Next.js par une application Vite/React autonome, Firebase, Firestore ou une autre architecture sans mon autorisation explicite.
+
+Le projet doit être exportable, exécutable localement et déployable sur Vercel.
+
+### Organisation recommandée
+
+Structure le code de manière professionnelle, par exemple :
+
+- app/
+- components/
+- features/
+- lib/
+- services/
+- hooks/
+- types/
+- prisma/
+- public/
+- tests/
+- docs/
+
+Adapte cette structure si nécessaire, mais conserve une séparation claire entre l'interface, les règles métier, les API et les accès aux données.
+
+### Base de données
+
+Utilise PostgreSQL sur Neon.
+
+Configure correctement Prisma et les connexions adaptées à un environnement serverless.
+
+Prévois :
+- DATABASE_URL pour la connexion via le pooler Neon.
+- DIRECT_URL pour les migrations si nécessaire.
+- Les migrations Prisma versionnées.
+- Les relations et contraintes d'intégrité.
+- Les index utiles.
+- Les transactions de base de données pour les opérations financières.
+
+Ne crée pas une base temporaire en mémoire pour simuler la persistance.
+
+Ne laisse pas les données principales uniquement dans localStorage.
+
+## 4. IDENTITÉ VISUELLE ET EXPÉRIENCE UTILISATEUR
+
+Crée une identité visuelle professionnelle pour KPATA.
+
+Je veux un produit moderne, sérieux, rassurant et accessible, avec une finition digne d'une véritable FinTech.
+
+Direction artistique :
+- Interface claire et lumineuse.
+- Design épuré.
+- Couleurs cohérentes et élégantes.
+- Typographie moderne et lisible.
+- Espacements harmonieux.
+- Cartes sobres.
+- Icônes cohérentes.
+- Graphiques lisibles.
+- Boutons bien hiérarchisés.
+- Formulaires simples.
+- Navigation intuitive.
+
+Évite :
+- Les interfaces surchargées.
+- Les couleurs agressives.
+- Les dégradés excessifs.
+- Les tableaux de bord sombres.
+- Les animations inutiles.
+- Les effets visuels qui ralentissent l'application.
+- Les interfaces qui ressemblent à des modèles génériques générés automatiquement.
+
+Crée une véritable charte graphique cohérente entre toutes les pages.
+
+Le design doit être responsive dès le départ.
+
+Sur mobile, privilégie une navigation simple, des cartes adaptées et des formulaires faciles à utiliser.
+
+La langue principale est le français. Prépare une architecture permettant d'ajouter l'anglais ultérieurement.
+
+La devise par défaut du lancement au Bénin est le FCFA (XOF).
+
+Affiche les montants avec un formatage cohérent et compréhensible.
+
+## 5. PAGES ET ESPACES À DÉVELOPPER
+
+### A. Site public
+
+Développe :
+- Page d'accueil.
+- Présentation de KPATA.
+- Fonctionnalités.
+- Présentation des différents types de groupes.
+- Tarifs.
+- FAQ.
+- Contact.
+- Conditions générales.
+- Politique de confidentialité.
+- Connexion.
+- Inscription.
+
+La page d'accueil doit expliquer rapidement le problème que KPATA résout, présenter ses avantages et encourager la création d'un compte.
+
+### B. Authentification et compte utilisateur
+
+Développe réellement :
+- Inscription.
+- Connexion.
+- Déconnexion.
+- Vérification de l'adresse e-mail.
+- Mot de passe oublié.
+- Réinitialisation du mot de passe.
+- Gestion du profil.
+- Modification du mot de passe.
+- Gestion des préférences.
+- Gestion des sessions.
+
+Utilise une solution d'authentification sécurisée compatible avec Next.js.
+
+Les mots de passe doivent être hachés de manière sécurisée.
+
+Les sessions doivent être protégées par des cookies HTTP-only, Secure en production et SameSite adapté.
+
+Ne stocke jamais les mots de passe en clair.
+
+### C. Tableau de bord personnel
+
+Développe un véritable tableau de bord connecté aux données de l'utilisateur.
+
+Il doit afficher :
+- Nombre de groupes.
+- Dépenses enregistrées.
+- Total des avances.
+- Dettes à payer.
+- Montants à recevoir.
+- Contributions attendues.
+- Contributions confirmées.
+- Remboursements en attente.
+- Dernières activités.
+- Prochaines échéances.
+- Notifications.
+
+Toutes les données doivent provenir de la base de données.
+
+### D. Gestion des groupes
+
+Développe :
+- Création d'un groupe.
+- Modification.
+- Archivage.
+- Fermeture selon les permissions.
+- Consultation.
+- Gestion des paramètres.
+- Choix du type de groupe.
+- Choix du pays.
+- Choix de la devise.
+- Fuseau horaire.
+- Gestion des invitations.
+- Gestion des membres.
+
+Un utilisateur peut appartenir à plusieurs groupes.
+
+Chaque groupe doit avoir ses propres données financières indépendantes.
+
+### E. Membres et permissions
+
+Prévois :
+- Propriétaire.
+- Administrateur.
+- Trésorier.
+- Membre.
+- Observateur.
+
+Les permissions doivent être contrôlées côté serveur.
+
+Permets l'ajout de membres sans compte KPATA.
+
+Un membre externe doit pouvoir participer aux opérations du groupe sans qu'un faux compte utilisateur soit créé.
+
+Prévois le rattachement ultérieur d'un membre externe à un compte KPATA, avec vérification sécurisée et conservation de son historique.
+
+Le départ d'un membre ne doit jamais supprimer ses anciennes opérations financières.
+
+### F. Gestion des dépenses
+
+Développe toutes les fonctionnalités du cahier des charges :
+- Création d'une dépense.
+- Modification.
+- Annulation contrôlée.
+- Historique.
+- Catégories.
+- Description.
+- Justificatifs.
+- Commentaires.
+- Dates.
+- Dépenses récurrentes.
+- Dépenses personnelles.
+- Dépenses collectives.
+- Dépenses partiellement collectives.
+
+Une dépense doit pouvoir être réglée par plusieurs payeurs.
+
+Il faut distinguer les payeurs des participants et des personnes responsables de chaque part.
+
+### G. Moteur de répartition financière
+
+Implémente réellement les méthodes suivantes :
+- Répartition égale.
+- Répartition personnalisée.
+- Répartition en pourcentage.
+- Répartition par poids.
+- Répartition selon la participation.
+- Répartition par montant fixe.
+
+Le système doit gérer correctement les arrondis.
+
+La somme des parts doit toujours correspondre exactement au montant à répartir.
+
+Les calculs financiers doivent être réalisés avec des types précis, comme Decimal ou des entiers représentant les unités monétaires appropriées.
+
+Il est interdit d'utiliser des nombres flottants JavaScript imprécis pour les calculs financiers.
+
+Toutes les règles doivent être validées côté serveur.
+
+### H. Contributions et cotisations
+
+Développe :
+- Création d'une cotisation.
+- Cotisations périodiques.
+- Montants attendus.
+- Contributions personnalisées.
+- Paiements partiels.
+- Historique des versements.
+- Validation.
+- Contestation.
+- Annulation.
+- Suivi individuel.
+
+Distingue obligatoirement :
+1. Montant attendu.
+2. Montant déclaré.
+3. Montant confirmé.
+4. Montant restant.
+
+Une contribution déclarée ne doit pas être automatiquement considérée comme payée.
+
+### I. Soldes, dettes et remboursements
+
+Développe :
+- Calcul automatique des soldes.
+- Identification des créanciers.
+- Identification des débiteurs.
+- Historique des dettes.
+- Demande de remboursement.
+- Déclaration de remboursement.
+- Confirmation.
+- Contestation.
+- Remboursement partiel.
+- Remboursements multiples.
+- Historique des opérations.
+- Proposition d'optimisation des remboursements.
+
+Un remboursement déclaré ne devient confirmé qu'après validation appropriée.
+
+Les soldes doivent être calculés séparément par groupe.
+
+Les opérations annulées ou corrigées doivent rester traçables.
+
+### J. Budgets et objectifs
+
+Développe :
+- Budgets mensuels.
+- Budgets trimestriels.
+- Budgets annuels.
+- Budgets par catégorie.
+- Alertes de dépassement.
+- Objectifs d'épargne collective.
+- Suivi de progression.
+- Historique des contributions.
+
+KPATA suit les engagements et les mouvements déclarés ou confirmés. Il ne conserve pas les fonds des utilisateurs dans le MVP.
+
+### K. Statistiques et rapports
+
+Développe :
+- Tableau de bord de groupe.
+- Dépenses par période.
+- Dépenses par catégorie.
+- Avances par payeur.
+- Contributions par membre.
+- Dettes.
+- Remboursements.
+- Budgets.
+- Rapports mensuels.
+- Rapports trimestriels.
+- Rapports annuels.
+- Export PDF.
+- Export Excel.
+
+Les statistiques doivent être calculées à partir des données réelles et respecter les permissions.
+
+### L. Notifications et communication
+
+Développe :
+- Notifications internes.
+- Invitations.
+- Alertes de cotisations.
+- Rappels d'échéances.
+- Nouvelles dépenses.
+- Remboursements.
+- Contestations.
+- Alertes budgétaires.
+- Changements de rôles.
+- Commentaires sur les dépenses.
+
+Prévois l'architecture pour les notifications par e-mail et les autres canaux qui pourront être activés ultérieurement.
+
+Les tâches programmées doivent être compatibles avec Vercel.
+
+### M. Documents et justificatifs
+
+Permets l'importation de :
+- Photos.
+- Images.
+- PDF.
+
+Les documents doivent être associés aux dépenses, contributions et remboursements.
+
+Utilise un stockage externe compatible S3, par exemple Cloudflare R2.
+
+Ne stocke pas les documents uniquement dans le système de fichiers temporaire de Vercel.
+
+Protège les fichiers privés et vérifie leur type et leur taille.
+
+### N. Administration centrale
+
+Crée un espace administrateur séparé.
+
+Il doit permettre :
+- Gestion des utilisateurs.
+- Gestion des groupes selon les besoins administratifs autorisés.
+- Gestion des abonnements.
+- Gestion des offres.
+- Gestion des demandes de paiement.
+- Gestion des signalements.
+- Gestion des catégories par défaut.
+- Statistiques globales.
+- Gestion des annonces.
+- Consultation des journaux.
+- Suivi des incidents.
+
+L'administration ne doit pas donner automatiquement un accès illimité aux données financières privées des groupes.
+
+Prévois un rôle administrateur central sécurisé, distinct des rôles des groupes.
+
+## 6. ABONNEMENTS ET MODÈLE ÉCONOMIQUE
+
+Implémente un modèle freemium avec facturation par groupe et non par membre.
+
+### Offre gratuite
+Elle doit permettre d'utiliser les fonctionnalités financières essentielles :
+- Création et participation aux groupes.
+- Gestion de base des membres.
+- Dépenses.
+- Plusieurs payeurs.
+- Répartition.
+- Soldes.
+- Remboursements.
+- Historique de base.
+- Notifications essentielles.
+
+### Offre Premium
+Prix cible : maximum 500 FCFA par groupe et par mois.
+
+Fonctionnalités possibles :
+- Statistiques avancées.
+- Rapports détaillés.
+- Export PDF et Excel.
+- Budgets avancés.
+- Historique étendu.
+- Automatisations.
+- Gestion avancée des cotisations.
+
+### Offre Organisation
+Prix cible : maximum 1 000 FCFA par groupe et par mois.
+
+Fonctionnalités :
+- Plusieurs responsables.
+- Gestion avancée des permissions.
+- Rapports financiers.
+- Gestion avancée des membres.
+- Exports.
+- Outils de supervision adaptés.
+
+Ces prix sont des objectifs de conception à rendre configurables depuis l'administration.
+
+Ne rends pas les fonctionnalités financières essentielles inutilisables pour forcer l'abonnement.
+
+Prévois :
+- Périodes d'abonnement.
+- Dates de début et de fin.
+- Renouvellement.
+- Expiration.
+- Historique.
+- Statuts.
+- Activation et suspension.
+- Gestion des demandes.
+
+## 7. INTÉGRATION FEDAPAY — EXIGENCE OBLIGATOIRE
+
+FedaPay doit être intégré dans KPATA.
+
+Ne l'oublie pas et ne le remplace pas silencieusement par un autre prestataire.
+
+Documentation officielle à consulter :
+- https://docs-v1.fedapay.com/
+- https://docs-v1.fedapay.com/paiements/transactions
+- https://docs-v1.fedapay.com/paiements/methodes-de-paiement
+- https://docs-v1.fedapay.com/development/webhooks
+
+### Objectif principal
+
+Intégrer FedaPay pour permettre le paiement des abonnements Premium et Organisation.
+
+Pour le lancement au Bénin, prévoir les moyens disponibles sur le compte marchand et autorisés par FedaPay, notamment :
+- MTN Mobile Money.
+- Moov Money.
+- CELTIIS Cash.
+- CORIS Money.
+- BMO.
+- Cartes Visa et Mastercard si elles sont activées et disponibles.
+
+Ne suppose pas que tous les moyens sont automatiquement activés sur le compte marchand.
+
+### Architecture technique
+
+Créer un service de paiement dédié, par exemple :
+- lib/payments/fedapay.ts
+- lib/payments/payment-service.ts
+
+Créer les Route Handlers nécessaires pour :
+- Initialiser une transaction.
+- Obtenir le lien ou token de paiement.
+- Rediriger l'utilisateur vers le paiement.
+- Recevoir les webhooks.
+- Vérifier le statut d'une transaction.
+- Enregistrer le résultat.
+- Mettre à jour l'abonnement après confirmation vérifiée.
+
+### Sécurité obligatoire
+
+Les clés secrètes FedaPay ne doivent jamais apparaître dans le frontend.
+
+Prévoir les variables d'environnement :
+- FEDAPAY_SECRET_KEY
+- FEDAPAY_PUBLIC_KEY
+- FEDAPAY_ENVIRONMENT
+
+Séparer Sandbox et Live.
+
+Vérifier les signatures des webhooks selon la documentation officielle, notamment X-FEDAPAY-SIGNATURE.
+
+Prévoir :
+- Vérification serveur du statut de la transaction.
+- Protection contre les webhooks falsifiés.
+- Idempotence.
+- Prévention des paiements dupliqués.
+- Vérification du montant.
+- Vérification de la devise.
+- Historique des transactions.
+- Gestion des paiements échoués.
+- Gestion des paiements annulés.
+- Gestion des paiements en attente.
+- Gestion des remboursements si pris en charge.
+
+Ne jamais activer un abonnement uniquement parce que l'utilisateur revient sur une page de succès.
+
+L'activation doit dépendre d'une confirmation vérifiée côté serveur.
+
+### Distinction fondamentale entre les paiements
+
+Ne confonds pas les trois opérations suivantes :
+
+1. Paiement d'un abonnement KPATA : le client paie KPATA.
+2. Paiement d'une contribution à un groupe : un membre contribue au financement collectif.
+3. Remboursement entre deux membres : un débiteur rembourse un créancier.
+
+Pour le MVP, FedaPay doit être réellement intégré pour les abonnements.
+
+Prépare l'architecture pour les contributions par paiement électronique, mais ne prétends pas que l'argent encaissé sur le compte marchand KPATA est automatiquement reversé au bénéficiaire d'un groupe.
+
+Vérifie dans la documentation et auprès de FedaPay les possibilités contractuelles de transfert, reversement, sous-comptes ou paiement de bénéficiaires.
+
+Si ces fonctions ne sont pas disponibles ou autorisées, ne les simule pas.
+
+Les paiements de contributions effectués à l'extérieur de KPATA peuvent être déclarés et confirmés selon les règles du cahier des charges.
+
+### Configuration sans identifiants réels
+
+Tu dois développer toute l'intégration et la préparer en Sandbox sans attendre mes clés.
+
+Si les clés sont absentes :
+- Affiche un état de configuration clair.
+- Ne simule pas une transaction réelle.
+- Permets de tester les autres fonctionnalités.
+- Documente précisément les secrets à ajouter avant la production.
+
+## 8. SÉCURITÉ ET FIABILITÉ
+
+KPATA manipule des informations financières privées.
+
+Applique les bonnes pratiques de sécurité.
+
+Exigences :
+- Authentification sécurisée.
+- Contrôle des permissions côté serveur.
+- Isolation stricte des données entre groupes.
+- Validation serveur des formulaires.
+- Protection des API.
+- Protection contre les accès directs non autorisés.
+- Protection contre les attaques courantes.
+- Limitation des requêtes abusives.
+- Gestion sécurisée des sessions.
+- Protection des documents.
+- Journalisation des opérations sensibles.
+- Gestion des erreurs.
+- Secrets dans les variables d'environnement.
+- Transactions PostgreSQL pour les opérations financières.
+
+Aucun utilisateur ne doit pouvoir accéder aux informations d'un autre groupe en modifiant simplement un identifiant dans une URL ou une requête API.
+
+Les opérations financières ne doivent pas être physiquement supprimées sans procédure contrôlée.
+
+Toute modification importante doit laisser une trace.
+
+Ne place jamais de clé secrète dans le code frontend, le dépôt Git ou un fichier public.
+
+## 9. TESTS AUTOMATISÉS OBLIGATOIRES
+
+Écris des tests réels.
+
+Teste au minimum :
+
+- Inscription et connexion.
+- Permissions des groupes.
+- Isolation des données.
+- Création d'un groupe.
+- Ajout d'un membre externe.
+- Dépense avec un seul payeur.
+- Dépense avec plusieurs payeurs.
+- Répartition égale.
+- Répartition personnalisée.
+- Répartition en pourcentage.
+- Répartition par poids.
+- Gestion des arrondis.
+- Calcul des soldes.
+- Contributions partielles.
+- Confirmation de contribution.
+- Remboursement partiel.
+- Confirmation de remboursement.
+- Contestation.
+- Annulation.
+- Calcul des budgets.
+- Accès aux documents.
+- Abonnements.
+- Paiement FedaPay en Sandbox.
+- Webhook valide.
+- Webhook invalide.
+- Webhook reçu plusieurs fois.
+- Paiement avec mauvais montant.
+- Tentative d'activation frauduleuse d'un abonnement.
+
+Les tests financiers doivent vérifier précisément les montants et les soldes.
+
+Corrige les erreurs détectées avant de considérer le projet comme terminé.
+
+## 10. DONNÉES DE DÉMONSTRATION
+
+Prévois un environnement de démonstration avec des données fictives clairement identifiées.
+
+Exemples :
+- Un groupe familial.
+- Un groupe de colocation.
+- Une association.
+- Plusieurs membres.
+- Des dépenses.
+- Des payeurs multiples.
+- Des contributions.
+- Des remboursements.
+- Des budgets.
+
+Ces données doivent être créées par des seeds Prisma.
+
+Elles ne doivent pas être mélangées avec les données réelles de production.
+
+Ne crée pas de faux paiements FedaPay confirmés.
+
+## 11. LIVRABLES TECHNIQUES
+
+À la fin du développement, je veux retrouver :
+
+1. Le code complet du frontend.
+2. Le code complet du backend.
+3. Le schéma Prisma.
+4. Les migrations PostgreSQL.
+5. Les API fonctionnelles.
+6. Le système d'authentification.
+7. Le système de permissions.
+8. Le moteur de calcul financier.
+9. L'intégration FedaPay.
+10. Le tableau de bord personnel.
+11. Les tableaux de bord des groupes.
+12. L'espace administrateur.
+13. Les tests automatisés.
+14. Les données de démonstration.
+15. Le fichier `.env.example`.
+16. Le fichier README.md.
+17. La documentation d'installation.
+18. La documentation des API.
+19. La documentation des paiements.
+20. Le guide de déploiement Vercel et Neon.
+21. Le guide de sauvegarde et de restauration.
+22. Un rapport final des fonctionnalités réellement développées.
+
+Crée également un fichier `PROJECT_PROGRESS.md` qui indique :
+- Les fonctionnalités terminées.
+- Les fonctionnalités en cours.
+- Les fonctionnalités restantes.
+- Les fichiers importants créés.
+- Les migrations effectuées.
+- Les tests exécutés.
+- Les erreurs rencontrées.
+- Les configurations externes encore nécessaires.
+
+Ce fichier doit permettre de reprendre le travail sans perdre le contexte.
+
+## 12. MÉTHODE DE TRAVAIL AUTONOME
+
+Tu dois travailler comme une équipe de développement qui prend en charge le projet de bout en bout.
+
+Ne t'arrête pas après avoir généré une maquette.
+
+Ne te contente pas de proposer une architecture ou un plan.
+
+Tu dois réellement créer les fichiers, écrire le code, connecter les fonctionnalités et tester l'application.
+
+Procède dans cet ordre :
+
+**Phase 1 — Analyse et fondations**
+- Lire le cahier des charges.
+- Définir l'architecture.
+- Initialiser le projet.
+- Installer les dépendances nécessaires.
+- Préparer la base de données.
+- Définir le schéma Prisma.
+- Mettre en place l'authentification.
+
+**Phase 2 — Interface et navigation**
+- Créer l'identité visuelle.
+- Développer les pages publiques.
+- Développer les formulaires.
+- Développer les tableaux de bord.
+- Développer les interfaces responsive.
+
+**Phase 3 — Backend et fonctionnalités métier**
+- Développer les groupes.
+- Développer les membres et permissions.
+- Développer les dépenses.
+- Développer les répartitions.
+- Développer les contributions.
+- Développer les soldes.
+- Développer les remboursements.
+- Développer les budgets.
+- Développer les rapports.
+- Développer les notifications.
+
+**Phase 4 — Paiements et administration**
+- Développer l'espace administrateur.
+- Développer les abonnements.
+- Intégrer FedaPay.
+- Tester les transactions Sandbox.
+- Sécuriser les webhooks.
+
+**Phase 5 — Qualité et finalisation**
+- Écrire et exécuter les tests.
+- Corriger les erreurs.
+- Vérifier les permissions.
+- Vérifier les calculs.
+- Vérifier les interfaces mobiles.
+- Vérifier les performances.
+- Vérifier le build de production.
+
+**Phase 6 — Préparation au déploiement**
+- Préparer la configuration Neon.
+- Préparer les variables d'environnement.
+- Préparer les migrations de production.
+- Vérifier la compatibilité Vercel.
+- Préparer le dépôt GitHub.
+- Rédiger le guide de déploiement.
+
+Tu dois poursuivre automatiquement d'une phase à l'autre.
+
+Ne me demande pas de valider chaque petit choix technique.
+
+Ne pose pas de questions dont la réponse figure déjà dans le cahier des charges ou ce prompt.
+
+Lorsqu'un choix technique secondaire est nécessaire, adopte la solution la plus fiable, simple à maintenir et compatible avec l'architecture.
+
+Si une clé API, une autorisation externe ou une action réservée à mon compte est nécessaire, continue tout le travail possible et indique précisément ce que je devrai fournir.
+
+Ne prétends jamais avoir effectué une action externe que tu n'as pas réellement exécutée.
+
+## 13. EXIGENCES DE QUALITÉ ET CRITÈRES DE FIN
+
+Le projet ne sera considéré comme terminé que lorsque :
+
+- L'application possède un frontend complet.
+- Le backend fonctionne.
+- La base de données est réellement connectée.
+- Les migrations sont disponibles.
+- L'inscription et la connexion fonctionnent.
+- Les utilisateurs peuvent créer et gérer plusieurs groupes.
+- Les membres et permissions fonctionnent.
+- Les dépenses sont enregistrées en base.
+- Les paiements multiples sont correctement gérés.
+- Les répartitions sont exactes.
+- Les soldes sont cohérents.
+- Les contributions et remboursements fonctionnent.
+- Les opérations sont historisées.
+- Les tableaux de bord affichent les données réelles.
+- Les fonctionnalités principales ne dépendent pas de données fictives.
+- Les abonnements sont gérés.
+- FedaPay est intégré en Sandbox.
+- Les contrôles de sécurité sont appliqués.
+- Les tests importants passent.
+- Le build de production réussit.
+- Le projet est prêt à être synchronisé avec GitHub et déployé sur Vercel.
+
+Aucun bouton ne doit être purement décoratif.
+
+Aucune page importante ne doit être vide.
+
+Aucun formulaire ne doit simplement afficher un message de succès sans enregistrer réellement les données.
+
+Aucune fonctionnalité ne doit être présentée comme opérationnelle si elle ne l'est pas.
+
+Si une fonctionnalité avancée doit être reportée, indique-le clairement dans le rapport final et ne la simule pas.
+
+## 14. INSTRUCTION FINALE
+
+Commence maintenant par analyser le cahier des charges complet et inspecter les possibilités de l'environnement de développement.
+
+Ensuite, construis KPATA intégralement.
+
+Privilégie la qualité du code, la sécurité, la cohérence des données financières, l'expérience utilisateur et la compatibilité avec Vercel.
+
+Je veux recevoir un véritable projet logiciel, pas une simple démonstration.
+
+**Ne termine pas ton travail après la première génération de l'interface. Continue jusqu'à ce que toutes les fonctionnalités réalisables soient développées, connectées, testées et documentées.**
+
+À la fin, présente un bilan honnête avec :
+- Ce qui fonctionne réellement.
+- Les tests exécutés et leurs résultats.
+- Les éléments restant à configurer.
+- Les clés et comptes externes nécessaires.
+- Les étapes exactes pour exporter le code, le synchroniser avec GitHub et le déployer sur Vercel.
+
+**KPATA — Ensemble, gérons mieux notre argent.**

@@ -1,0 +1,6 @@
+{
+  "name": "KPATA — Gestion collaborative des dépenses et finances collectives",
+  "description": "Plateforme web de gestion des dépenses en groupe, cotisations, remboursements et budgets partagés pour familles, colocataires et associations au Bénin et en Afrique.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,2290 @@
+# CAHIER DES CHARGES FONCTIONNEL ET TECHNIQUE
+# PROJET KPATA
+
+**Plateforme web intelligente de gestion collaborative des dépenses, des contributions et des finances collectives**
+
+| Informations | Description |
+|---|---|
+| Nom du projet | Kpata |
+| Nature | Plateforme web responsive uniquement |
+| Domaine | FinTech / Gestion collaborative / Services numériques |
+| Pays de lancement | Bénin |
+| Zone d'expansion | Afrique de l'Ouest, puis ensemble du continent africain |
+| Version du document | 1.1 |
+| Statut | Cahier des charges révisé |
+| Public cible | Particuliers, familles, foyers, couples, colocataires, étudiants, groupes, associations, organisations et communautés |
+| Architecture | Application web full-stack JavaScript / TypeScript |
+| Frontend et backend | Next.js, React, Node.js et TypeScript |
+| ORM | Prisma |
+| Base de données | PostgreSQL hébergé sur Neon |
+| Déploiement web | Vercel |
+| Modèle économique | Freemium avec abonnements accessibles par groupe |
+
+---
+
+# 1. PRÉSENTATION GÉNÉRALE DU PROJET
+
+## 1.1. Contexte et justification
+
+Dans la vie quotidienne, de nombreuses personnes sont amenées à partager des dépenses, à effectuer des achats collectifs, à contribuer financièrement à des projets communs ou à gérer les charges d'un même foyer.
+
+Ces situations concernent notamment :
+
+- Les familles composées de plusieurs membres.
+- Les couples qui partagent leurs dépenses.
+- Les foyers et ménages.
+- Les étudiants vivant en colocation.
+- Les personnes vivant dans des résidences partagées.
+- Les groupes d'amis.
+- Les associations et organisations.
+- Les groupes religieux et communautaires.
+- Les collègues qui organisent des activités communes.
+- Les personnes organisant des voyages, des cérémonies ou des événements.
+- Les petites communautés ayant des dépenses communes.
+
+Malgré la diversité de ces situations, la gestion financière collective repose encore souvent sur des méthodes dispersées : discussions WhatsApp, cahiers, feuilles Excel, notes personnelles, calculs manuels et transferts d'argent effectués sans véritable suivi centralisé.
+
+Cette organisation peut entraîner plusieurs difficultés :
+
+- Manque de transparence dans les dépenses.
+- Mauvaise répartition des contributions.
+- Oublis de remboursement.
+- Difficultés à identifier les personnes ayant déjà contribué.
+- Erreurs de calcul.
+- Désaccords entre les membres.
+- Absence d'historique fiable.
+- Difficultés à établir un bilan financier.
+- Mauvaise anticipation des dépenses futures.
+- Difficultés à suivre les contributions de plusieurs personnes.
+- Confusion entre les sommes annoncées, déclarées et réellement confirmées.
+
+Face à ces difficultés, le projet Kpata consiste à mettre en place une solution numérique centralisée, accessible et simple d'utilisation permettant aux individus et aux communautés de mieux organiser leurs finances collectives.
+
+## 1.2. Présentation de la solution
+
+Kpata est une plateforme web permettant à un utilisateur de créer, rejoindre et gérer plusieurs espaces de gestion financière collaborative.
+
+Chaque espace, appelé **groupe Kpata**, représente une communauté de personnes partageant des dépenses, des obligations ou des objectifs financiers communs.
+
+Un groupe peut représenter :
+
+- Une famille.
+- Un foyer.
+- Une colocation.
+- Un couple.
+- Une association.
+- Un groupe d'amis.
+- Une équipe.
+- Une communauté.
+- Un événement.
+- Un voyage.
+- Une organisation.
+- Tout autre ensemble de personnes ayant besoin de gérer des dépenses communes.
+
+Dans chaque groupe, les membres peuvent enregistrer les dépenses, définir les contributions, répartir les charges, suivre les remboursements, gérer les cotisations et consulter les rapports financiers.
+
+La plateforme doit permettre à une même personne d'appartenir simultanément à plusieurs groupes, sans mélanger leurs données financières.
+
+Une dépense peut être réglée par un seul membre ou par plusieurs membres. Le système doit distinguer les personnes qui ont réellement avancé l'argent des personnes qui doivent supporter une part de la dépense.
+
+La plateforme doit également permettre d'ajouter des personnes qui ne possèdent pas encore de compte Kpata, afin que les familles, associations et autres groupes puissent commencer à utiliser le service sans imposer immédiatement la création d'un compte à chaque membre.
+
+## 1.3. Vision du projet
+
+Faire de Kpata une plateforme de référence pour la gestion collaborative des finances quotidiennes, en permettant à toute communauté de mieux organiser ses dépenses, de répartir équitablement ses contributions et de renforcer la transparence financière.
+
+L'ambition est de construire une solution accessible et adaptée aux réalités africaines, capable de répondre aux besoins de différents profils et de fonctionner dans plusieurs pays.
+
+## 1.4. Mission
+
+Simplifier la gestion de l'argent partagé grâce à des outils numériques accessibles, fiables, sécurisés et adaptés aux réalités économiques et sociales des utilisateurs.
+
+## 1.5. Objectifs généraux
+
+- Faciliter la gestion des dépenses collectives.
+- Améliorer la transparence financière entre les membres.
+- Automatiser les calculs de répartition.
+- Simplifier le suivi des contributions.
+- Réduire les conflits liés aux remboursements.
+- Centraliser les informations financières.
+- Faciliter la planification des dépenses.
+- Permettre aux groupes de produire des bilans financiers.
+- Rendre la gestion collective accessible à tous.
+- Permettre à plusieurs personnes de payer une même dépense.
+- Faciliter la participation des personnes qui ne possèdent pas encore de compte.
+- Proposer une tarification adaptée au pouvoir d'achat des utilisateurs africains.
+- Construire une architecture capable d'évoluer vers plusieurs pays africains.
+
+## 1.6. Objectifs spécifiques
+
+La plateforme devra permettre de :
+
+1. Créer un compte utilisateur.
+2. Créer plusieurs groupes de gestion.
+3. Définir la nature et les règles de chaque groupe.
+4. Inviter et gérer les membres.
+5. Ajouter des membres sans compte Kpata.
+6. Attribuer des rôles et des permissions.
+7. Enregistrer les dépenses.
+8. Enregistrer un ou plusieurs payeurs pour une même dépense.
+9. Répartir les dépenses selon plusieurs méthodes.
+10. Gérer les contributions individuelles et collectives.
+11. Calculer automatiquement les soldes.
+12. Enregistrer et confirmer les remboursements.
+13. Gérer les cotisations périodiques.
+14. Définir des budgets collectifs.
+15. Programmer des dépenses récurrentes.
+16. Conserver les justificatifs.
+17. Consulter des statistiques et des rapports.
+18. Recevoir des notifications.
+19. Exporter les données financières.
+20. Utiliser la plateforme depuis un navigateur sur ordinateur, tablette ou smartphone.
+21. Gérer plusieurs groupes indépendants.
+22. Permettre une évolution progressive vers plusieurs pays et devises.
+
+---
+
+# 2. ANALYSE DES UTILISATEURS ET DES BESOINS
+
+## 2.1. Public cible général
+
+Kpata est destinée à toute personne ou communauté ayant besoin d'organiser, de partager ou de suivre des dépenses avec d'autres personnes.
+
+La plateforme ne doit pas être limitée à une tranche d'âge, à une profession ou à une situation familiale particulière.
+
+Elle doit répondre aux besoins de différents groupes, avec des fonctionnalités communes et des paramètres adaptables.
+
+## 2.2. Catégories d'utilisateurs et besoins associés
+
+### A. Les familles et les foyers
+
+Exemple : une famille composée de deux parents et de quatre enfants.
+
+Besoins :
+
+- Créer un espace familial.
+- Ajouter les différents membres.
+- Gérer les dépenses alimentaires.
+- Suivre les factures d'eau et d'électricité.
+- Enregistrer le loyer.
+- Gérer les dépenses scolaires.
+- Suivre les dépenses médicales.
+- Définir les contributions des différents membres.
+- Planifier les dépenses mensuelles.
+- Consulter le budget familial.
+- Identifier les dépenses les plus importantes.
+- Conserver les justificatifs.
+- Définir des responsabilités financières différentes selon les membres.
+- Ajouter des membres qui ne possèdent pas de compte Kpata.
+- Permettre à plusieurs membres de payer une même dépense.
+
+Particularité : les contributions ne doivent pas nécessairement être égales. Un parent peut prendre en charge une plus grande partie des dépenses qu'un autre membre.
+
+Les relations familiales ne doivent pas être confondues avec les rôles techniques de la plateforme. Les droits d'accès doivent rester configurables.
+
+### B. Les étudiants et colocataires
+
+Besoins :
+
+- Créer un groupe de colocation.
+- Partager le loyer.
+- Répartir les factures.
+- Gérer les achats alimentaires.
+- Partager les dépenses d'entretien.
+- Identifier les dettes entre colocataires.
+- Enregistrer les remboursements.
+- Suivre les cotisations périodiques.
+- Répartir une dépense selon les personnes qui en ont réellement bénéficié.
+- Consulter l'historique des avances de chacun.
+
+### C. Les couples
+
+Besoins :
+
+- Créer un espace commun.
+- Partager les dépenses du ménage.
+- Définir des contributions proportionnelles ou égales.
+- Suivre les dépenses personnelles et communes.
+- Planifier les projets communs.
+- Consulter un bilan mensuel.
+- Distinguer les dépenses individuelles des dépenses partagées.
+
+### D. Les groupes d'amis
+
+Besoins :
+
+- Organiser des sorties.
+- Partager les dépenses d'un événement.
+- Répartir les frais de transport.
+- Suivre les avances.
+- Identifier les remboursements en attente.
+- Enregistrer les dépenses payées par plusieurs amis.
+
+### E. Les associations et organisations
+
+Besoins :
+
+- Créer un groupe institutionnel.
+- Enregistrer les membres.
+- Gérer les cotisations.
+- Suivre les contributions.
+- Enregistrer les dépenses.
+- Gérer les budgets d'activités.
+- Conserver les justificatifs.
+- Produire des rapports financiers.
+- Permettre à plusieurs responsables de gérer les opérations.
+- Attribuer des permissions spécifiques aux responsables.
+- Consulter les historiques de cotisations et de dépenses.
+
+### F. Les groupes organisant des événements
+
+Exemples : anniversaires, mariages, voyages, cérémonies et activités communautaires.
+
+Besoins :
+
+- Définir un objectif financier.
+- Fixer le budget.
+- Ajouter les participants.
+- Définir les contributions attendues.
+- Enregistrer les paiements.
+- Suivre les dépenses effectuées.
+- Consulter le budget restant.
+- Produire un bilan final.
+- Gérer les personnes ayant contribué partiellement.
+
+### G. Les groupes professionnels et communautés
+
+Besoins :
+
+- Créer un espace de gestion partagé.
+- Ajouter les participants.
+- Définir des responsables.
+- Organiser les dépenses communes.
+- Répartir les contributions.
+- Suivre les remboursements.
+- Consulter les rapports.
+- Conserver les justificatifs.
+
+## 2.3. Principe de fonctionnement universel
+
+Le fonctionnement de Kpata doit reposer sur une architecture commune.
+
+Une personne crée un compte, puis crée ou rejoint un groupe.
+
+Chaque groupe dispose de ses propres membres, dépenses, contributions, remboursements, budgets et paramètres.
+
+Un utilisateur peut donc être :
+
+- Administrateur d'un groupe familial.
+- Simple membre d'un groupe de colocation.
+- Trésorier d'une association.
+- Participant à un groupe de voyage.
+- Responsable financier d'un groupe professionnel.
+
+Ses rôles et ses permissions peuvent être différents dans chaque groupe.
+
+Les données financières d'un groupe ne doivent jamais être mélangées avec celles d'un autre groupe.
+
+---
+
+# 3. ORGANISATION ET GESTION DES GROUPES
+
+## 3.1. Création d'un groupe
+
+Un utilisateur connecté doit pouvoir créer un groupe.
+
+Informations nécessaires :
+
+- Nom du groupe.
+- Type de groupe.
+- Description facultative.
+- Photo ou illustration facultative.
+- Pays.
+- Devise principale.
+- Fuseau horaire.
+- Date de création.
+- Administrateur principal.
+- Règles de contribution initiales.
+
+Types de groupes proposés :
+
+1. Famille.
+2. Foyer.
+3. Couple.
+4. Colocation.
+5. Groupe d'amis.
+6. Association.
+7. Organisation.
+8. Groupe professionnel.
+9. Voyage.
+10. Événement.
+11. Communauté.
+12. Autre.
+
+Le type de groupe sert à proposer des paramètres et des catégories adaptées, mais ne doit pas limiter les fonctionnalités essentielles.
+
+Chaque groupe doit posséder une devise principale. Les opérations financières doivent être enregistrées dans cette devise.
+
+## 3.2. Invitation des membres
+
+L'administrateur doit pouvoir inviter des personnes par :
+
+- Adresse e-mail.
+- Numéro de téléphone.
+- Lien d'invitation.
+- Code d'invitation.
+
+Une invitation doit avoir une durée de validité configurable.
+
+Le système doit permettre de :
+
+- Accepter une invitation.
+- Refuser une invitation.
+- Annuler une invitation.
+- Renvoyer une invitation.
+- Consulter les invitations en attente.
+- Identifier les invitations expirées.
+- Empêcher la réutilisation frauduleuse d'un lien d'invitation.
+
+## 3.3. Gestion des membres
+
+Chaque groupe possède une liste de membres.
+
+Informations possibles :
+
+- Nom.
+- Prénom.
+- Photo de profil.
+- Numéro de téléphone, si disponible.
+- Adresse e-mail, si disponible.
+- Rôle.
+- Date d'adhésion.
+- Statut.
+- Contributions.
+- Solde individuel.
+- Type de membre.
+- Identifiant du compte associé, lorsqu'il existe.
+
+L'administrateur peut :
+
+- Ajouter un membre.
+- Retirer un membre.
+- Modifier son rôle.
+- Suspendre temporairement son accès.
+- Consulter son historique d'activité.
+- Modifier certaines informations autorisées.
+- Inviter un membre externe à créer un compte.
+
+Le retrait d'un membre ne doit pas supprimer ses anciennes opérations financières.
+
+### 3.3.1. Membres possédant un compte Kpata
+
+Un membre possédant un compte Kpata peut être associé à son compte utilisateur.
+
+Il peut accéder aux informations du groupe selon ses permissions.
+
+### 3.3.2. Membres sans compte Kpata
+
+Un administrateur ou un membre autorisé doit pouvoir ajouter une personne qui ne possède pas encore de compte.
+
+Informations possibles :
+
+- Prénom.
+- Nom.
+- Numéro de téléphone facultatif.
+- Adresse e-mail facultative.
+- Informations complémentaires utiles au groupe.
+
+Cette personne doit pouvoir participer aux dépenses, aux répartitions, aux contributions et aux remboursements enregistrés dans le groupe.
+
+Elle doit être identifiée clairement comme membre sans compte.
+
+Le système ne doit pas inventer de compte utilisateur pour cette personne.
+
+### 3.3.3. Rattachement ultérieur d'un membre externe à un compte
+
+Lorsqu'un membre externe crée un compte Kpata, il doit pouvoir demander ou effectuer le rattachement de son profil existant à son nouveau compte.
+
+Ce rattachement doit être sécurisé.
+
+Il doit notamment prévoir :
+
+- Une vérification de l'identité ou du moyen de contact.
+- La prévention des doublons.
+- Une vérification des éventuels comptes déjà associés.
+- Une validation appropriée lorsque cela est nécessaire.
+- La conservation de l'historique financier.
+- La conservation des anciennes participations et opérations.
+
+Le rattachement ne doit jamais modifier rétroactivement les montants ni les responsabilités financières enregistrées.
+
+## 3.4. Gestion des rôles
+
+Les rôles doivent être configurables par groupe.
+
+**Propriétaire du groupe :**
+
+- Création du groupe.
+- Gestion des paramètres.
+- Attribution des rôles.
+- Gestion des membres.
+- Fermeture ou transfert du groupe.
+
+**Administrateur :**
+
+- Gestion des membres.
+- Gestion des dépenses.
+- Gestion des paramètres autorisés.
+- Consultation des rapports.
+- Gestion des invitations.
+
+**Trésorier :**
+
+- Gestion des cotisations.
+- Suivi des contributions.
+- Vérification des remboursements.
+- Production des rapports financiers.
+- Consultation des opérations autorisées.
+
+**Membre :**
+
+- Consultation des informations auxquelles il a accès.
+- Ajout de dépenses selon les permissions.
+- Consultation de ses soldes.
+- Déclaration de remboursements.
+- Participation aux activités du groupe.
+
+**Observateur :**
+
+- Consultation des informations autorisées.
+- Aucun droit de modification des opérations.
+
+Les permissions doivent être indépendantes du type de groupe.
+
+Les relations familiales, comme parent, enfant ou responsable du foyer, peuvent être représentées comme des informations complémentaires. Elles ne doivent pas donner automatiquement tous les droits techniques.
+
+Si des mineurs utilisent la plateforme, des restrictions et une supervision adaptées devront être prévues.
+
+## 3.5. Gestion des groupes privés
+
+Un groupe doit pouvoir être :
+
+- Privé : accessible uniquement sur invitation.
+- Accessible par lien : toute personne possédant une invitation valide peut demander à rejoindre le groupe.
+- Public : uniquement pour les communautés qui souhaitent être découvertes, avec contrôle de l'adhésion.
+
+Les informations financières doivent rester privées, même lorsque la fiche de présentation d'un groupe est publique.
+
+## 3.6. Gestion du départ d'un membre
+
+Lorsqu'un membre quitte un groupe :
+
+- Son accès peut être suspendu ou clôturé.
+- Son historique financier doit être conservé.
+- Ses dettes et créances historiques doivent rester consultables par les personnes autorisées.
+- Ses anciennes dépenses ne doivent pas disparaître.
+- Ses anciennes contributions ne doivent pas être supprimées.
+- Les soldes doivent rester cohérents.
+- Une procédure de transfert de responsabilités peut être proposée.
+
+Aucun départ ne doit permettre d'effacer artificiellement une dette.
+
+---
+
+# 4. GESTION DES DÉPENSES
+
+## 4.1. Création d'une dépense
+
+Un membre autorisé doit pouvoir enregistrer une dépense.
+
+Informations obligatoires :
+
+- Intitulé.
+- Montant total.
+- Devise.
+- Groupe concerné.
+- Date de la dépense.
+- Catégorie.
+- Participants concernés.
+- Méthode de répartition.
+- Un ou plusieurs payeurs.
+- Montant payé par chaque payeur.
+
+Informations facultatives :
+
+- Description.
+- Photo du reçu.
+- Document justificatif.
+- Commentaire.
+- Date de remboursement prévue.
+- Dépense récurrente.
+- Référence de paiement éventuelle.
+
+Le montant total de la dépense doit être égal à la somme des montants avancés par les différents payeurs lorsque la dépense est entièrement réglée.
+
+Le système doit pouvoir distinguer une dépense enregistrée, une dépense payée partiellement et une dépense entièrement réglée.
+
+## 4.2. Catégories de dépenses
+
+Les catégories doivent être personnalisables.
+
+Catégories initiales :
+
+- Alimentation.
+- Logement.
+- Loyer.
+- Eau.
+- Électricité.
+- Internet.
+- Gaz.
+- Transport.
+- Santé.
+- Éducation.
+- Habillement.
+- Entretien.
+- Loisirs.
+- Événements.
+- Voyages.
+- Activités associatives.
+- Autres.
+
+L'administrateur peut créer, modifier ou désactiver des catégories personnalisées.
+
+Les catégories par défaut peuvent être adaptées au type de groupe et au pays.
+
+## 4.3. Méthodes de répartition
+
+Kpata doit proposer plusieurs modes.
+
+**Répartition équitable :**
+
+Le montant est divisé entre tous les participants concernés.
+
+**Répartition personnalisée :**
+
+Chaque participant possède une part déterminée manuellement.
+
+**Répartition en pourcentage :**
+
+Chaque participant prend en charge un pourcentage de la dépense.
+
+**Répartition par poids :**
+
+Chaque participant possède un coefficient de contribution.
+
+**Répartition par participation :**
+
+Seuls les membres ayant bénéficié de la dépense participent à son financement.
+
+**Répartition par montant fixe :**
+
+Chaque participant contribue selon un montant prédéfini.
+
+Le système doit gérer les arrondis en monnaie entière et garantir que la somme des parts corresponde toujours au montant total à répartir.
+
+Les règles de répartition doivent être vérifiées côté serveur avant l'enregistrement définitif.
+
+## 4.4. Dépenses personnelles et collectives
+
+La plateforme doit distinguer :
+
+- Les dépenses entièrement collectives.
+- Les dépenses partiellement collectives.
+- Les dépenses personnelles enregistrées dans un contexte de groupe.
+
+Une dépense personnelle ne doit pas automatiquement créer une dette pour les autres membres.
+
+L'utilisateur doit pouvoir préciser les personnes concernées par une dépense.
+
+## 4.5. Dépenses récurrentes
+
+L'utilisateur doit pouvoir programmer une dépense :
+
+- Quotidienne.
+- Hebdomadaire.
+- Mensuelle.
+- Trimestrielle.
+- Annuelle.
+- Selon une fréquence personnalisée.
+
+Exemples :
+
+- Loyer mensuel.
+- Facture Internet.
+- Abonnement collectif.
+- Cotisation périodique.
+
+Le système doit générer les échéances et prévenir les utilisateurs concernés.
+
+La génération automatique d'une échéance ne doit pas être considérée comme un paiement réellement effectué.
+
+Les tâches programmées devront être exécutées avec un mécanisme compatible avec l'environnement de déploiement Vercel. Elles ne devront pas dépendre obligatoirement d'un processus Node.js permanent.
+
+## 4.6. Modification et suppression
+
+Une dépense doit pouvoir être modifiée ou annulée selon les permissions.
+
+Toute modification financière doit être enregistrée dans un journal d'activité.
+
+Les opérations déjà remboursées doivent faire l'objet d'une procédure de correction contrôlée afin de préserver la cohérence comptable.
+
+Les suppressions physiques définitives d'opérations financières ne doivent pas être le comportement normal.
+
+Une annulation ou une écriture corrective doit être privilégiée afin de conserver l'historique.
+
+## 4.7. Gestion des dépenses avec plusieurs payeurs
+
+Une même dépense peut être payée par plusieurs membres.
+
+Exemple :
+
+Une dépense collective de 15 000 FCFA est effectuée.
+
+- Mariam paie 5 000 FCFA.
+- Jean paie 10 000 FCFA.
+
+Le système doit enregistrer :
+
+- Le montant total de la dépense : 15 000 FCFA.
+- Le premier payeur : Mariam.
+- Le montant avancé par Mariam : 5 000 FCFA.
+- Le deuxième payeur : Jean.
+- Le montant avancé par Jean : 10 000 FCFA.
+- Les participants concernés.
+- La part financière attribuée à chaque participant.
+
+La somme des paiements enregistrés doit correspondre au montant total de la dépense lorsque celle-ci est entièrement réglée.
+
+Les avances de chaque payeur doivent être prises en compte dans le calcul des soldes.
+
+Il faut impérativement distinguer :
+
+1. Les personnes qui ont payé.
+2. Les montants réellement avancés par chacune.
+3. Les personnes qui participent à la dépense.
+4. La part financière attribuée à chaque participant.
+5. Les éventuels remboursements déjà confirmés.
+
+Le moteur financier ne doit pas supposer qu'un payeur est automatiquement responsable de la totalité de la dépense.
+
+Une dépense peut également être enregistrée comme partiellement payée si tous les montants n'ont pas encore été réglés.
+
+---
+
+# 5. GESTION DES CONTRIBUTIONS ET COTISATIONS
+
+## 5.1. Contributions individuelles
+
+Le système doit permettre de définir les contributions attendues de chaque membre.
+
+Une contribution peut être :
+
+- Égale pour tous.
+- Proportionnelle.
+- Personnalisée.
+- Fixée par l'administrateur.
+- Calculée selon une règle propre au groupe.
+
+## 5.2. Cotisations collectives
+
+L'administrateur ou le trésorier peut créer une cotisation.
+
+Informations :
+
+- Nom.
+- Objectif.
+- Montant total attendu.
+- Montant par membre.
+- Fréquence.
+- Date de début.
+- Date limite.
+- Membres concernés.
+- Statut.
+- Devise.
+
+Exemples :
+
+- Cotisation familiale mensuelle.
+- Participation à un événement.
+- Fonds d'urgence.
+- Contribution pour une activité associative.
+- Cotisation annuelle d'une association.
+
+## 5.3. Suivi des contributions
+
+Pour chaque membre, le système doit afficher :
+
+- Montant attendu.
+- Montant déclaré.
+- Montant confirmé.
+- Montant restant.
+- Date de dernière contribution.
+- Historique.
+- Statut de chaque versement.
+
+Il faut distinguer clairement :
+
+- Une contribution attendue.
+- Une contribution déclarée.
+- Une contribution confirmée.
+- Une contribution contestée.
+- Une contribution annulée.
+
+Une contribution attendue ne doit jamais être comptabilisée comme un paiement effectué.
+
+Une contribution déclarée par son auteur ne doit pas être automatiquement considérée comme confirmée.
+
+## 5.4. Paiements partiels des contributions
+
+Un membre doit pouvoir effectuer plusieurs versements pour atteindre le montant attendu.
+
+Exemple :
+
+Une cotisation de 10 000 FCFA peut être réglée en deux versements :
+
+- Premier versement : 4 000 FCFA.
+- Deuxième versement : 6 000 FCFA.
+
+Le système doit afficher :
+
+- Montant attendu : 10 000 FCFA.
+- Montant déclaré : selon les déclarations enregistrées.
+- Montant confirmé : 10 000 FCFA après validation des deux versements.
+- Montant restant : 0 FCFA.
+
+Les versements doivent être historisés séparément.
+
+---
+
+# 6. GESTION DES SOLDES ET REMBOURSEMENTS
+
+## 6.1. Calcul automatique des soldes
+
+Pour chaque membre :
+
+**Solde net = Total des avances confirmées - Total des parts attribuées.**
+
+Un solde positif représente un montant à recevoir.
+
+Un solde négatif représente un montant à payer.
+
+Un solde nul signifie que la situation est équilibrée.
+
+Les calculs doivent tenir compte des paiements effectués par plusieurs payeurs pour une même dépense.
+
+Les calculs doivent être réalisés indépendamment pour chaque groupe.
+
+Les contributions et remboursements doivent être pris en compte selon leur statut et leur nature, sans double comptabilisation.
+
+## 6.2. Gestion des dettes
+
+Le système doit afficher :
+
+- Les personnes à qui l'utilisateur doit de l'argent.
+- Les personnes qui lui doivent de l'argent.
+- Les montants concernés.
+- L'origine des dettes.
+- Les échéances éventuelles.
+- Le statut des remboursements.
+- Les avances à l'origine des soldes.
+
+Les informations doivent rester compréhensibles pour des utilisateurs qui ne maîtrisent pas la comptabilité.
+
+## 6.3. Enregistrement des remboursements
+
+Un remboursement peut être effectué en dehors de Kpata, notamment par espèces ou Mobile Money.
+
+Le système doit permettre de déclarer le remboursement.
+
+Informations :
+
+- Débiteur.
+- Créancier.
+- Groupe concerné.
+- Montant.
+- Devise.
+- Date.
+- Mode de paiement.
+- Référence facultative.
+- Justificatif facultatif.
+- Commentaire facultatif.
+
+Le remboursement doit être confirmé par le bénéficiaire ou selon une procédure de validation autorisée.
+
+Statuts :
+
+- En attente.
+- Confirmé.
+- Contesté.
+- Annulé.
+
+Kpata ne doit pas présenter un transfert comme effectué si elle n'a fait qu'enregistrer une déclaration de paiement.
+
+## 6.4. Remboursements partiels et multiples
+
+Un membre doit pouvoir rembourser une dette en plusieurs fois.
+
+Exemple :
+
+Une personne doit 15 000 FCFA.
+
+Elle effectue :
+
+- Un premier remboursement de 5 000 FCFA.
+- Un deuxième remboursement de 5 000 FCFA.
+- Un troisième remboursement de 5 000 FCFA.
+
+Chaque opération doit être enregistrée et confirmée indépendamment.
+
+Le système doit afficher le montant initial, le montant confirmé, le montant restant et l'historique des remboursements.
+
+Un remboursement ne peut pas dépasser le montant restant dû, sauf situation exceptionnelle explicitement encadrée.
+
+## 6.5. Confirmation et contestation
+
+Le bénéficiaire doit pouvoir confirmer ou contester un remboursement déclaré.
+
+En cas de contestation :
+
+- Le remboursement ne doit pas être considéré comme confirmé.
+- Le motif de contestation peut être enregistré.
+- Les parties concernées doivent être informées.
+- L'opération doit rester consultable.
+- Une résolution doit être possible selon les permissions du groupe.
+
+Les confirmations et contestations doivent être tracées.
+
+## 6.6. Optimisation des remboursements
+
+Le système doit pouvoir regrouper les dettes pour proposer le nombre minimal de transactions nécessaire à l'équilibrage des soldes d'un groupe.
+
+Les propositions doivent rester explicables et consultables.
+
+L'optimisation ne doit pas modifier automatiquement les historiques d'origine.
+
+Les propositions de règlement ne deviennent des remboursements réels qu'après déclaration et confirmation appropriées.
+
+---
+
+# 7. GESTION DES BUDGETS ET OBJECTIFS FINANCIERS
+
+## 7.1. Budgets par groupe
+
+Chaque groupe doit pouvoir définir un budget :
+
+- Mensuel.
+- Trimestriel.
+- Annuel.
+- Personnalisé.
+
+## 7.2. Budgets par catégorie
+
+Exemples :
+
+- Alimentation : 80 000 FCFA.
+- Électricité : 15 000 FCFA.
+- Eau : 8 000 FCFA.
+- Internet : 10 000 FCFA.
+
+Le système doit comparer les dépenses réelles aux budgets prévus.
+
+## 7.3. Alertes budgétaires
+
+Notifications lorsque :
+
+- 50 % du budget est consommé.
+- 75 % du budget est consommé.
+- 90 % du budget est consommé.
+- Le budget est dépassé.
+
+Les seuils doivent être personnalisables.
+
+## 7.4. Objectifs d'épargne collective
+
+Un groupe doit pouvoir définir un objectif financier commun.
+
+Exemple : réunir 300 000 FCFA pour acheter un équipement familial.
+
+Fonctionnalités :
+
+- Définition de l'objectif.
+- Montant cible.
+- Date limite.
+- Participants.
+- Contributions.
+- Progression.
+- Historique des versements.
+- Montant restant à atteindre.
+
+Cette fonctionnalité est un suivi d'engagements et de contributions. Elle ne constitue pas un service de conservation de fonds.
+
+Kpata ne doit pas laisser croire qu'il conserve ou sécurise l'argent des participants.
+
+---
+
+# 8. TABLEAU DE BORD ET STATISTIQUES
+
+## 8.1. Tableau de bord personnel
+
+L'utilisateur doit retrouver :
+
+- Nombre de groupes.
+- Dépenses personnelles enregistrées.
+- Total des avances.
+- Total des dettes.
+- Montants à recevoir.
+- Dernières opérations.
+- Prochaines échéances.
+- Notifications.
+- Contributions à effectuer.
+- Remboursements en attente de confirmation.
+
+Les informations doivent pouvoir être filtrées selon les groupes.
+
+## 8.2. Tableau de bord de groupe
+
+Chaque groupe possède son propre tableau de bord.
+
+Indicateurs :
+
+- Dépenses totales.
+- Dépenses du mois.
+- Contributions confirmées.
+- Contributions restantes.
+- Dettes en attente.
+- Remboursements confirmés.
+- Budget disponible.
+- Dépenses par catégorie.
+- Activités récentes.
+- Répartition des avances par payeur.
+- Montants attendus et confirmés.
+
+Les données affichées doivent provenir des opérations réelles enregistrées dans la base de données.
+
+## 8.3. Rapports financiers
+
+L'application doit pouvoir générer :
+
+- Rapport mensuel.
+- Rapport trimestriel.
+- Rapport annuel.
+- Rapport par membre.
+- Rapport par catégorie.
+- Rapport des cotisations.
+- Rapport des remboursements.
+- Rapport des dépenses.
+- Rapport des avances effectuées par chaque payeur.
+- Rapport des budgets.
+
+Les rapports doivent être exportables en PDF et Excel selon les droits de l'utilisateur.
+
+Les rapports doivent distinguer les opérations confirmées des opérations en attente.
+
+---
+
+# 9. NOTIFICATIONS ET COMMUNICATION
+
+## 9.1. Notifications automatiques
+
+L'application doit notifier les utilisateurs concernant :
+
+- Les invitations.
+- Les nouvelles dépenses.
+- Les modifications de dépenses.
+- Les nouvelles cotisations.
+- Les échéances.
+- Les retards de contribution.
+- Les demandes de remboursement.
+- Les remboursements confirmés.
+- Les contestations.
+- Les dépassements budgétaires.
+- Les changements de rôle.
+- Les opérations importantes du groupe.
+
+## 9.2. Canaux de notification
+
+- Notifications internes.
+- Notifications push web, si activées.
+- E-mail.
+- SMS selon les besoins et le budget.
+- WhatsApp via une intégration officielle, si elle est justifiée et disponible.
+
+Chaque utilisateur doit pouvoir configurer ses préférences.
+
+Les notifications doivent être conçues pour fonctionner avec une architecture compatible avec Vercel.
+
+Les traitements asynchrones devront utiliser des services adaptés ou des tâches programmées. Le système ne doit pas dépendre d'un serveur Node.js permanent pour fonctionner.
+
+## 9.3. Commentaires et échanges
+
+Une dépense peut posséder un espace de commentaires permettant aux membres de poser des questions ou de signaler une erreur.
+
+Un système de signalement doit permettre de contester une opération.
+
+Les commentaires et signalements doivent respecter les permissions du groupe.
+
+---
+
+# 10. COFFRE-FORT DOCUMENTAIRE
+
+Kpata doit permettre de conserver les justificatifs liés aux opérations.
+
+Types de documents :
+
+- Factures.
+- Reçus.
+- Preuves de transfert.
+- Documents de cotisation.
+- Devis.
+- Justificatifs de dépenses.
+
+Fonctionnalités :
+
+- Importation d'images.
+- Importation de PDF.
+- Association à une dépense.
+- Association à une contribution.
+- Association à un remboursement.
+- Consultation.
+- Téléchargement.
+- Suppression selon les permissions.
+- Protection des accès.
+- Vérification des types de fichiers.
+- Limitation de la taille des fichiers.
+
+Le stockage des fichiers devra utiliser un service de stockage objet externe compatible avec une architecture web déployée sur Vercel.
+
+Le stockage des justificatifs ne doit pas dépendre du système de fichiers temporaire de Vercel.
+
+Une solution compatible S3 pourra être utilisée.
+
+Les liens d'accès aux documents privés devront être protégés et temporaires lorsque cela est nécessaire.
+
+Une fonctionnalité de reconnaissance automatique des factures pourra être envisagée dans une version ultérieure.
+
+---
+
+# 11. ESPACE ADMINISTRATEUR DE LA PLATEFORME
+
+Un espace d'administration centralisé doit être développé.
+
+Il permettra de superviser le fonctionnement général de Kpata sans donner automatiquement accès au contenu privé des groupes.
+
+Fonctionnalités :
+
+- Gestion des comptes.
+- Gestion des rôles administratifs.
+- Consultation des statistiques globales.
+- Gestion des signalements.
+- Gestion des catégories par défaut.
+- Gestion des paramètres de la plateforme.
+- Gestion des abonnements.
+- Validation manuelle des paiements d'abonnement.
+- Activation et renouvellement des abonnements.
+- Suivi des incidents.
+- Consultation des journaux techniques.
+- Gestion des versions et annonces.
+- Gestion des offres tarifaires.
+- Consultation des informations nécessaires à la facturation.
+
+Les accès aux données privées devront être strictement limités, justifiés et journalisés.
+
+Un administrateur de la plateforme ne doit pas disposer automatiquement d'un accès illimité à toutes les opérations financières privées des groupes.
+
+Toute intervention exceptionnelle sur des données privées doit être encadrée et tracée.
+
+## 11.1. Gestion manuelle des abonnements pendant le pilote
+
+Pour la première phase de lancement au Bénin, la validation manuelle des abonnements est suffisante.
+
+L'administrateur doit pouvoir :
+
+- Consulter les demandes d'abonnement.
+- Identifier le groupe concerné.
+- Vérifier le montant déclaré.
+- Vérifier les informations de paiement communiquées.
+- Accepter ou refuser une demande.
+- Activer un abonnement.
+- Renouveler un abonnement.
+- Suspendre un abonnement selon les règles définies.
+- Consulter l'historique des validations.
+- Ajouter un commentaire administratif.
+
+Les opérations d'administration doivent être journalisées.
+
+La plateforme ne doit pas présenter une déclaration de paiement d'abonnement comme un paiement confirmé avant vérification.
+
+Une intégration automatique avec des prestataires de paiement pourra être étudiée ultérieurement.
+
+---
+
+# 12. FONCTIONNALITÉS INTELLIGENTES ET ÉVOLUTIVES
+
+Ces fonctionnalités ne sont pas toutes indispensables à la première version.
+
+Elles doivent être conçues comme des évolutions possibles, sans empêcher la réalisation du MVP.
+
+## 12.1. Assistant intelligent
+
+Un assistant pourra comprendre des demandes en langage naturel.
+
+Exemple :
+
+« Nous avons dépensé 15 000 FCFA pour les courses aujourd'hui. J'ai payé 10 000 et Mariam a payé le reste. »
+
+L'assistant pourra proposer la création des opérations correspondantes, sous réserve de validation par l'utilisateur.
+
+Il devra comprendre les montants, les payeurs, les participants et les catégories.
+
+Il ne devra jamais enregistrer automatiquement une opération financière sans validation appropriée.
+
+## 12.2. Reconnaissance des justificatifs
+
+L'utilisateur pourra importer une photo de reçu.
+
+Le système pourra extraire :
+
+- Montant.
+- Date.
+- Nom du commerçant.
+- Articles éventuels.
+
+L'utilisateur devra vérifier les informations avant enregistrement.
+
+## 12.3. Analyse des dépenses
+
+L'assistant pourra produire des synthèses :
+
+- Évolution des dépenses.
+- Catégories les plus coûteuses.
+- Comparaison entre les périodes.
+- Détection d'anomalies.
+- Suggestions d'optimisation.
+- Prévisions budgétaires.
+
+Les analyses devront s'appuyer sur les données auxquelles l'utilisateur est autorisé à accéder.
+
+## 12.4. Assistance vocale
+
+L'utilisateur pourra dicter une dépense.
+
+L'application transformera la commande vocale en proposition d'enregistrement.
+
+Aucune opération financière ne devra être validée automatiquement sans confirmation appropriée.
+
+---
+
+# 13. MODÈLE ÉCONOMIQUE
+
+Kpata adoptera un modèle freemium.
+
+L'objectif est de proposer une plateforme réellement utile même sans abonnement payant, tout en permettant aux utilisateurs qui ont besoin de fonctionnalités avancées de souscrire à une offre accessible.
+
+La tarification doit tenir compte du pouvoir d'achat des populations africaines.
+
+Le modèle privilégié est une facturation **par groupe et non par membre**, afin que le prix ne devienne pas excessif lorsque les familles ou associations comptent beaucoup de participants.
+
+## 13.1. Offre gratuite
+
+L'offre gratuite doit permettre de découvrir et d'utiliser les principales fonctionnalités de Kpata.
+
+Fonctionnalités :
+
+- Création de compte.
+- Création et participation à des groupes.
+- Gestion de base des membres.
+- Ajout de dépenses.
+- Enregistrement des payeurs.
+- Calcul des parts.
+- Consultation des soldes.
+- Déclaration des remboursements.
+- Confirmation des remboursements.
+- Historique de base.
+- Notifications essentielles.
+
+Les limites éventuelles de l'offre gratuite devront être définies après validation des besoins et du modèle économique.
+
+Les fonctionnalités financières essentielles ne doivent pas être rendues inutilisables pour pousser artificiellement les utilisateurs vers un abonnement.
+
+## 13.2. Offre Premium
+
+<badge color="success">Objectif tarifaire : maximum 500 FCFA</badge>
+
+Prix cible : **500 FCFA par groupe et par mois au maximum.**
+
+Fonctionnalités envisagées :
+
+- Statistiques avancées.
+- Rapports détaillés.
+- Export PDF et Excel.
+- Archivage avancé.
+- Budgets avancés.
+- Gestion avancée des cotisations.
+- Automatisations.
+- Historique étendu.
+- Fonctionnalités de suivi supplémentaires.
+
+Le prix est facturé au groupe et non à chaque membre.
+
+Une famille de six personnes utilisant un groupe Premium ne doit donc pas payer six fois le prix de l'abonnement.
+
+## 13.3. Offre Organisation
+
+<badge color="success">Objectif tarifaire : maximum 1 000 FCFA</badge>
+
+Prix cible : **1 000 FCFA par groupe et par mois au maximum.**
+
+Destinée aux associations et aux organisations.
+
+Fonctionnalités :
+
+- Gestion avancée des membres.
+- Plusieurs responsables.
+- Rapports financiers.
+- Gestion des cotisations.
+- Contrôle des permissions.
+- Export des données.
+- Assistance prioritaire.
+- Fonctionnalités de supervision adaptées aux organisations.
+
+Le prix doit également être calculé par groupe et non par membre.
+
+## 13.4. Principes de tarification
+
+Les tarifs indiqués sont des objectifs de conception et non des prix commerciaux définitivement validés.
+
+Ils devront être testés auprès des utilisateurs pendant l'étude de marché et le pilote.
+
+Les principes suivants doivent être respectés :
+
+- Maintenir une offre gratuite utile.
+- Limiter le coût des abonnements.
+- Favoriser les abonnements par groupe.
+- Éviter les prix qui augmentent automatiquement avec le nombre de membres.
+- Adapter progressivement les tarifs aux différents pays.
+- Tenir compte du pouvoir d'achat local.
+- Éviter les frais cachés.
+- Présenter clairement les périodes et conditions d'abonnement.
+
+Les prix pourront être adaptés selon les pays, tout en conservant l'objectif d'accessibilité.
+
+## 13.5. Monétisation complémentaire
+
+- Abonnements.
+- Partenariats.
+- Services professionnels.
+- Intégrations avec des prestataires de paiement agréés.
+
+Ces sources de revenus ne doivent pas compromettre la neutralité et la confiance de la plateforme.
+
+---
+
+# 14. CAHIER DES CHARGES TECHNIQUE
+
+## 14.1. Architecture générale
+
+Kpata sera développée comme une application web full-stack reposant sur l'écosystème JavaScript et TypeScript.
+
+L'architecture devra être compatible avec Vercel pour le déploiement du site et avec Neon pour l'hébergement PostgreSQL.
+
+Le frontend et les fonctionnalités serveur seront organisés dans une application Next.js.
+
+Il n'est pas obligatoire de créer un serveur Express indépendant.
+
+Une séparation claire devra être maintenue entre :
+
+- L'interface utilisateur.
+- Les composants métier.
+- Les services applicatifs.
+- Les accès à la base de données.
+- Les routes API.
+- Les mécanismes d'authentification.
+- Les autorisations.
+- Les traitements asynchrones.
+
+### A. Frontend
+
+Technologies :
+
+- Next.js.
+- React.
+- TypeScript.
+- Tailwind CSS.
+- Bibliothèque de composants accessible.
+- Outils de validation des formulaires adaptés.
+- Bibliothèque de graphiques adaptée aux statistiques.
+
+Responsabilités :
+
+- Affichage des interfaces.
+- Navigation.
+- Gestion des formulaires.
+- Validation côté client.
+- Gestion des sessions.
+- Affichage des données.
+- Consommation des services serveur.
+- Notifications côté interface.
+- Affichage responsive.
+- Gestion des états de chargement et des erreurs.
+
+Le frontend doit être responsive et fonctionner sur les navigateurs modernes des ordinateurs, tablettes et smartphones.
+
+### B. Backend
+
+Environnement :
+
+- Node.js.
+- TypeScript.
+- Fonctionnalités serveur Next.js.
+- Route Handlers pour les API.
+- Server Actions lorsque cela est pertinent.
+
+Responsabilités :
+
+- Authentification.
+- Gestion des sessions.
+- Autorisations.
+- Gestion des groupes.
+- Gestion des membres.
+- Gestion des invitations.
+- Gestion des dépenses.
+- Calculs financiers.
+- Gestion des contributions.
+- Gestion des remboursements.
+- Rapports.
+- Notifications.
+- Journalisation.
+- Gestion des abonnements.
+
+Les règles métier sensibles doivent être exécutées côté serveur.
+
+Le navigateur ne doit jamais être considéré comme une source fiable pour les calculs financiers ou les permissions.
+
+Une API REST structurée pourra être utilisée pour les fonctionnalités qui le nécessitent.
+
+### C. Base de données
+
+Technologies :
+
+- PostgreSQL.
+- Neon pour l'hébergement de la base de données.
+- Prisma ORM pour la modélisation, les requêtes et les migrations.
+
+Prisma devra être utilisé pour :
+
+- Définir les modèles.
+- Définir les relations.
+- Gérer les migrations.
+- Effectuer les requêtes.
+- Maintenir une cohérence entre les types TypeScript et les données.
+
+Les opérations financières sensibles devront utiliser des transactions de base de données.
+
+Les connexions devront être configurées selon les recommandations de Neon et Prisma pour éviter les problèmes de connexions excessives dans un environnement serverless.
+
+### D. Déploiement
+
+Vercel sera utilisé pour le déploiement de la plateforme Next.js.
+
+L'architecture doit prévoir :
+
+- Environnement local.
+- Environnement de prévisualisation.
+- Environnement de production.
+- Variables d'environnement distinctes.
+- Configuration sécurisée des connexions.
+- Procédure de déploiement.
+- Vérification des migrations avant mise en production.
+- Gestion des erreurs.
+- Journalisation.
+- Sauvegardes de la base de données.
+
+Le fournisseur d'hébergement définitif pourra être réévalué si les besoins techniques ou économiques évoluent.
+
+### E. Stockage des fichiers
+
+Les justificatifs et documents devront être conservés dans un service de stockage objet externe compatible avec une architecture web serverless.
+
+Une solution compatible S3 pourra être utilisée.
+
+Les fichiers ne doivent pas être conservés uniquement dans le système de fichiers temporaire de Vercel.
+
+### F. Traitements asynchrones
+
+Les tâches qui nécessitent une exécution différée devront utiliser une solution compatible avec Vercel.
+
+Exemples :
+
+- Envoi de notifications.
+- Rappels de cotisations.
+- Génération de rapports.
+- Traitements périodiques.
+- Vérifications d'abonnements.
+- Traitement des documents.
+
+L'architecture ne doit pas supposer qu'un serveur Node.js permanent reste actif en arrière-plan.
+
+Les tâches programmées et traitements asynchrones devront être documentés.
+
+## 14.2. Structure de la base de données
+
+Les tables et modèles principaux à prévoir sont les suivants.
+
+**Utilisateurs et authentification**
+
+- users
+- user_profiles
+- user_settings
+- accounts, si nécessaire selon la solution d'authentification
+- sessions
+- password_reset_tokens
+- verification_tokens
+
+**Groupes et membres**
+
+- groups
+- group_types, si nécessaire
+- group_members
+- group_roles
+- group_permissions
+- group_invitations
+- member_account_link_requests
+
+**Dépenses**
+
+- expenses
+- expense_categories
+- expense_payers
+- expense_shares
+- expense_receipts
+- expense_comments
+- expense_revisions
+
+**Contributions**
+
+- contribution_plans
+- contributions
+- contribution_payments
+
+**Remboursements**
+
+- settlements
+- settlement_confirmations
+- settlement_disputes
+
+**Budgets et objectifs**
+
+- budgets
+- budget_categories
+- savings_goals
+- savings_contributions
+
+**Notifications et historique**
+
+- notifications
+- notification_preferences
+- activity_logs
+- audit_logs
+
+**Abonnements**
+
+- subscriptions
+- subscription_plans
+- subscription_transactions
+- subscription_validation_logs
+
+**Documents**
+
+- documents
+- document_links ou relations adaptées aux opérations concernées
+
+La structure définitive devra être normalisée et adaptée aux règles métier retenues.
+
+Les noms définitifs des modèles Prisma pourront être adaptés aux conventions de programmation, sans supprimer les responsabilités métier correspondantes.
+
+## 14.3. Relations principales
+
+- Un utilisateur peut appartenir à plusieurs groupes.
+- Un groupe peut posséder plusieurs membres.
+- Un membre de groupe peut être lié à un utilisateur ou être un membre externe sans compte.
+- Un groupe possède plusieurs dépenses.
+- Une dépense appartient à un seul groupe.
+- Une dépense peut posséder plusieurs payeurs.
+- Un payeur est associé à un membre du groupe.
+- Chaque payeur possède un montant avancé.
+- Une dépense peut concerner plusieurs participants.
+- Une dépense possède plusieurs parts individuelles.
+- Un groupe possède plusieurs cotisations.
+- Un utilisateur peut effectuer plusieurs contributions.
+- Un membre externe peut également être associé à des contributions.
+- Une contribution peut comporter plusieurs versements.
+- Un remboursement relie un débiteur à un créancier dans un contexte de groupe.
+- Un remboursement peut comporter plusieurs confirmations ou contestations selon son cycle de traitement.
+- Un groupe possède plusieurs budgets.
+- Un objectif d'épargne peut posséder plusieurs contributions.
+- Une opération peut être associée à plusieurs documents justificatifs.
+- Un groupe possède un historique d'activité.
+- Un abonnement est associé à un groupe ou à une entité de facturation définie par les règles commerciales.
+
+## 14.4. API et services applicatifs
+
+Les exemples suivants décrivent les fonctionnalités à exposer. Les routes définitives pourront être organisées en Route Handlers Next.js.
+
+**Authentification**
+
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/logout
+- POST /api/auth/forgot-password
+- POST /api/auth/reset-password
+- GET /api/auth/me
+
+**Groupes**
+
+- GET /api/groups
+- POST /api/groups
+- GET /api/groups/{id}
+- PUT /api/groups/{id}
+- DELETE /api/groups/{id}
+
+**Membres**
+
+- GET /api/groups/{id}/members
+- POST /api/groups/{id}/members
+- PUT /api/groups/{id}/members/{memberId}
+- DELETE /api/groups/{id}/members/{memberId}
+- POST /api/groups/{id}/members/{memberId}/link-account
+
+**Invitations**
+
+- POST /api/groups/{id}/invitations
+- GET /api/invitations
+- POST /api/invitations/{token}/accept
+- POST /api/invitations/{token}/reject
+
+**Dépenses**
+
+- GET /api/groups/{id}/expenses
+- POST /api/groups/{id}/expenses
+- GET /api/expenses/{id}
+- PUT /api/expenses/{id}
+- POST /api/expenses/{id}/cancel
+
+**Payeurs et répartition**
+
+- POST /api/expenses/{id}/payers
+- PUT /api/expenses/{id}/payers/{payerId}
+- DELETE /api/expenses/{id}/payers/{payerId}
+- POST /api/expenses/{id}/shares
+- GET /api/expenses/{id}/calculation
+
+**Soldes et remboursements**
+
+- GET /api/groups/{id}/balances
+- GET /api/groups/{id}/settlements
+- POST /api/settlements
+- POST /api/settlements/{id}/confirm
+- POST /api/settlements/{id}/dispute
+- POST /api/settlements/{id}/cancel
+
+**Cotisations**
+
+- GET /api/groups/{id}/contributions
+- POST /api/groups/{id}/contributions
+- POST /api/contributions/{id}/payments
+- POST /api/contributions/{id}/payments/{paymentId}/confirm
+
+**Budgets**
+
+- GET /api/groups/{id}/budgets
+- POST /api/groups/{id}/budgets
+- PUT /api/budgets/{id}
+
+**Statistiques**
+
+- GET /api/groups/{id}/statistics
+- GET /api/groups/{id}/reports
+- GET /api/users/me/statistics
+
+**Abonnements**
+
+- GET /api/groups/{id}/subscription
+- POST /api/groups/{id}/subscription/request
+- GET /api/admin/subscription-requests
+- POST /api/admin/subscription-requests/{id}/approve
+- POST /api/admin/subscription-requests/{id}/reject
+
+Ces routes sont indicatives. Les autorisations et validations seront définies endpoint par endpoint.
+
+## 14.5. Gestion des montants et précision financière
+
+La fiabilité financière est une exigence critique.
+
+Il est interdit d'utiliser des calculs en nombres flottants imprécis pour les montants financiers.
+
+Les montants doivent être représentés avec des types précis adaptés à la devise.
+
+Les solutions recommandées sont :
+
+- Des entiers représentant les unités monétaires minimales lorsque cela est approprié.
+- Des types Decimal adaptés aux montants décimaux lorsque cela est nécessaire.
+- Des calculs explicites avec les outils compatibles avec Prisma et JavaScript/TypeScript.
+
+Les conversions entre types ne doivent pas introduire de pertes de précision.
+
+Les arrondis doivent être gérés selon les règles de la devise et de la méthode de répartition.
+
+Pour chaque dépense, la somme des parts doit être égale au montant total à répartir.
+
+Pour chaque dépense réglée intégralement, la somme des montants avancés par les payeurs doit être égale au montant total de la dépense.
+
+Les transactions financières sensibles doivent être atomiques.
+
+---
+
+# 15. RÈGLES DE GESTION ET CONTRAINTES MÉTIER
+
+1. Un utilisateur doit être authentifié pour accéder aux données privées.
+2. Un utilisateur ne peut accéder qu'aux groupes auxquels il appartient, sauf permission particulière.
+3. Chaque groupe possède une devise principale.
+4. Chaque dépense doit être rattachée à un groupe.
+5. Chaque dépense doit avoir un montant strictement positif.
+6. La somme des parts doit correspondre au montant de la dépense.
+7. Les montants sont enregistrés dans des types numériques précis, sans calcul financier en nombres flottants imprécis.
+8. Les contributions attendues ne sont pas considérées comme des paiements.
+9. Un remboursement déclaré n'est pas automatiquement considéré comme confirmé.
+10. Une dépense modifiée doit entraîner un recalcul des soldes concernés.
+11. Les opérations historiques doivent être traçables.
+12. Le départ d'un membre ne doit pas supprimer ses dettes historiques.
+13. Les administrateurs ne peuvent pas modifier arbitrairement les historiques sans trace.
+14. Les suppressions financières doivent respecter les règles de conservation et de correction.
+15. Une personne peut appartenir à plusieurs groupes indépendants.
+16. Les soldes doivent être calculés séparément pour chaque groupe.
+17. Les notifications doivent respecter les préférences des utilisateurs.
+18. Les informations privées ne doivent pas être accessibles aux autres groupes.
+19. Les opérations financières sensibles doivent être exécutées dans des transactions de base de données.
+20. Le système doit gérer les changements de fuseau horaire et de devise.
+21. Une dépense peut avoir plusieurs payeurs.
+22. La somme des montants avancés par les payeurs doit correspondre au montant payé de la dépense.
+23. Un membre sans compte peut participer aux opérations d'un groupe selon ses permissions.
+24. Un membre externe ne doit pas être considéré automatiquement comme un utilisateur authentifié.
+25. Le rattachement d'un membre externe à un compte doit être sécurisé et conserver l'historique.
+26. Une déclaration de paiement ne doit jamais être présentée comme une confirmation définitive.
+27. Les remboursements partiels doivent être pris en charge.
+28. Une opération financière annulée doit rester traçable.
+29. Un abonnement déclaré payé ne doit pas être activé avant validation selon la procédure retenue.
+30. Le prix des abonnements doit être calculé par groupe et non obligatoirement par membre.
+31. Les opérations d'un groupe ne doivent jamais modifier les soldes d'un autre groupe.
+32. Les permissions doivent être vérifiées côté serveur.
+33. Le navigateur ne doit jamais être considéré comme une source fiable pour les montants ou les autorisations.
+34. Les documents privés doivent être accessibles uniquement aux personnes autorisées.
+35. Les tâches planifiées doivent être compatibles avec l'architecture serverless retenue.
+36. Kpata ne doit pas conserver les fonds des utilisateurs dans le MVP.
+37. Les changements de devise ne doivent pas écraser les montants d'origine.
+38. Les opérations financières doivent pouvoir être expliquées et auditées.
+
+---
+
+# 16. EXIGENCES NON FONCTIONNELLES
+
+## 16.1. Ergonomie
+
+L'application doit :
+
+- Être simple à comprendre.
+- Être utilisable par des personnes peu familiarisées avec la technologie.
+- Être responsive.
+- Fonctionner sur téléphone, tablette et ordinateur.
+- Présenter clairement les montants.
+- Proposer des formulaires courts.
+- Limiter les étapes inutiles.
+- Utiliser un vocabulaire compréhensible.
+- Afficher clairement les statuts des opérations.
+- Faciliter la navigation entre plusieurs groupes.
+
+## 16.2. Performance
+
+- Temps de chargement optimisé.
+- Pagination des historiques.
+- Optimisation des requêtes.
+- Mise en cache des informations adaptées.
+- Chargement progressif des documents.
+- Optimisation des images.
+- Limitation des requêtes inutiles.
+- Utilisation efficace de Prisma.
+- Gestion appropriée des connexions PostgreSQL.
+- Optimisation des pages pour les appareils mobiles.
+
+## 16.3. Disponibilité
+
+Le système doit prévoir :
+
+- Surveillance des erreurs.
+- Sauvegardes régulières.
+- Procédure de restauration.
+- Journalisation des incidents.
+- Protection contre les interruptions de service.
+- Surveillance des connexions à la base de données.
+- Vérification des tâches programmées.
+- Stratégie de reprise après incident.
+
+## 16.4. Sécurité
+
+- HTTPS obligatoire.
+- Hachage sécurisé des mots de passe.
+- Protection contre les accès non autorisés.
+- Contrôle d'accès basé sur les rôles.
+- Protection CSRF selon le mode d'authentification.
+- Validation serveur.
+- Limitation des requêtes abusives.
+- Protection des fichiers.
+- Journalisation des opérations sensibles.
+- Gestion sécurisée des secrets.
+- Sauvegardes chiffrées lorsque possible.
+- Gestion sécurisée des sessions.
+- Vérification des autorisations pour chaque groupe.
+- Protection contre les accès directs aux ressources d'un autre groupe.
+- Contrôle des fichiers importés.
+- Protection des endpoints d'administration.
+
+## 16.5. Protection des données personnelles
+
+Le projet devra respecter la réglementation applicable au Bénin et aux pays de déploiement.
+
+Les principes suivants devront être appliqués :
+
+- Collecter uniquement les données nécessaires.
+- Informer les utilisateurs sur les traitements.
+- Définir les durées de conservation.
+- Sécuriser les informations personnelles.
+- Encadrer les droits d'accès.
+- Permettre l'exercice des droits applicables.
+- Prévoir les formalités réglementaires nécessaires.
+- Limiter l'accès aux données des membres externes.
+- Prévoir des procédures adaptées aux données des mineurs, si leur utilisation est autorisée.
+
+---
+
+# 17. ACCESSIBILITÉ, CONNECTIVITÉ ET INTERNATIONALISATION
+
+## 17.1. Adaptation aux réalités locales
+
+La plateforme devra prendre en compte :
+
+- Les connexions Internet parfois instables.
+- Les appareils mobiles aux performances variables.
+- Les faibles volumes de données disponibles.
+- Les habitudes de paiement locales.
+- Les différences de pouvoir d'achat.
+- Les différences de moyens de communication.
+- Les particularités réglementaires des différents pays.
+
+L'interface doit rester légère et rapide.
+
+## 17.2. Mode faible connexion
+
+La plateforme étant une application web, elle pourra proposer des capacités PWA facultatives.
+
+Une PWA ne constitue pas une application mobile native.
+
+Elle permet notamment :
+
+- Une possibilité d'ajout à l'écran d'accueil.
+- La mise en cache de certaines pages.
+- La consultation de certaines données récemment synchronisées.
+- Une expérience de navigation améliorée en cas de connexion instable.
+
+La préparation de certaines opérations hors connexion pourra être envisagée.
+
+Les opérations financières non synchronisées devront être clairement signalées comme provisoires et ne devront pas modifier les soldes officiels avant validation du serveur.
+
+La synchronisation devra éviter les doublons et gérer les conflits.
+
+## 17.3. Langues
+
+Première version :
+
+- Français.
+
+Évolutions :
+
+- Anglais.
+- Langues locales selon les besoins.
+- Autres langues africaines.
+
+L'architecture devra permettre d'ajouter des langues sans reconstruire l'application.
+
+## 17.4. Devises
+
+Première version :
+
+- Franc CFA BCEAO (XOF).
+
+Évolutions :
+
+- Franc CFA BEAC (XAF).
+- Naira.
+- Cedi.
+- Autres devises selon les pays.
+
+Les conversions de devises devront utiliser des taux identifiés et datés.
+
+Les montants d'origine devront toujours être conservés.
+
+Une conversion ne doit jamais modifier rétroactivement les opérations financières enregistrées.
+
+## 17.5. Expansion géographique africaine
+
+Le lancement initial sera réalisé au Bénin.
+
+Après validation du produit et de son modèle économique, l'expansion pourra se faire progressivement vers les autres pays d'Afrique de l'Ouest, puis vers d'autres régions du continent.
+
+L'architecture doit prévoir :
+
+- La configuration du pays de chaque groupe.
+- La devise principale du groupe.
+- Le fuseau horaire.
+- Les formats de date et de nombre.
+- Les langues disponibles.
+- Les paramètres de paiement locaux.
+- Les règles fiscales et réglementaires applicables.
+- Les moyens de communication disponibles.
+- Les différences de pouvoir d'achat.
+
+L'expansion ne doit pas consister uniquement à traduire l'interface. Elle devra prendre en compte les réalités économiques, techniques et réglementaires de chaque pays.
+
+---
+
+# 18. INTÉGRATION DES PAIEMENTS
+
+L'intégration de paiements constitue une évolution importante, mais ne doit pas être obligatoire pour le lancement du MVP.
+
+## 18.1. Première version
+
+Les utilisateurs effectuent leurs paiements directement entre eux.
+
+Kpata permet uniquement :
+
+- D'enregistrer les paiements.
+- De déclarer les remboursements.
+- De confirmer les opérations.
+- De conserver les justificatifs.
+- De suivre les contributions.
+- D'afficher les statuts des opérations.
+
+Kpata ne doit pas conserver les fonds des utilisateurs.
+
+Les transferts d'argent restent réalisés par les moyens de paiement externes choisis par les utilisateurs.
+
+## 18.2. Versions futures
+
+Des intégrations pourront être étudiées avec des prestataires agréés compatibles avec :
+
+- MTN Mobile Money.
+- Moov Money.
+- Autres solutions Mobile Money.
+- Cartes bancaires.
+- Autres moyens de paiement locaux.
+
+L'intégration devra respecter les obligations contractuelles, techniques et réglementaires applicables.
+
+Kpata ne devra pas conserver les fonds des utilisateurs sans cadre réglementaire approprié.
+
+## 18.3. Paiement des abonnements
+
+Pendant le pilote béninois, la validation manuelle des abonnements par l'administrateur est suffisante.
+
+L'utilisateur pourra transmettre les informations nécessaires à la vérification de son paiement.
+
+L'administrateur vérifiera le paiement avant activation.
+
+Une intégration automatisée pourra être ajoutée ultérieurement.
+
+---
+
+# 19. DÉCOUPAGE DU PROJET EN VERSIONS
+
+## VERSION 1 — MVP
+
+Objectif : mettre sur le marché un produit simple, stable et utilisable.
+
+Fonctionnalités :
+
+- Inscription et connexion.
+- Gestion des profils.
+- Création des groupes.
+- Gestion des membres.
+- Ajout de membres sans compte.
+- Invitations.
+- Gestion des rôles essentiels.
+- Gestion des dépenses.
+- Gestion de plusieurs payeurs pour une même dépense.
+- Répartition équitable.
+- Répartition personnalisée.
+- Calcul des soldes.
+- Enregistrement des remboursements.
+- Confirmation des remboursements.
+- Gestion des remboursements partiels.
+- Historique.
+- Notifications essentielles.
+- Tableau de bord personnel et collectif.
+- Gestion des abonnements avec validation manuelle par l'administrateur.
+- Interface responsive.
+
+Le MVP doit être utilisable aussi bien par une famille que par une colocation ou un groupe d'amis.
+
+Il doit être développé comme une plateforme web accessible depuis les navigateurs.
+
+## VERSION 2 — GESTION AVANCÉE
+
+- Cotisations périodiques.
+- Budgets.
+- Dépenses récurrentes.
+- Répartition en pourcentage.
+- Répartition par poids.
+- Objectifs collectifs.
+- Rapports PDF et Excel.
+- Gestion documentaire avancée.
+- Permissions personnalisées.
+- Mode faible connexion amélioré.
+- Notifications avancées.
+- Optimisation des remboursements.
+
+## VERSION 3 — INTELLIGENCE ET AUTOMATISATION
+
+- Assistant intelligent.
+- Reconnaissance des justificatifs.
+- Commandes vocales.
+- Analyses avancées.
+- Prévisions budgétaires.
+- Détection d'anomalies.
+- Automatisations.
+- Suggestions d'optimisation.
+
+## VERSION 4 — EXPANSION ET MONÉTISATION
+
+- Paiements via prestataires agréés.
+- Automatisation des abonnements.
+- Offres professionnelles.
+- Multi-devises.
+- Internationalisation.
+- Expansion dans plusieurs pays africains.
+- Partenariats.
+- Application mobile native uniquement si une étude ultérieure démontre qu'elle est nécessaire.
+
+L'application mobile native n'appartient pas au périmètre de la première version.
+
+---
+
+# 20. PLAN DE TESTS ET CRITÈRES DE VALIDATION
+
+Le système devra faire l'objet de tests fonctionnels, techniques, de sécurité et d'utilisabilité.
+
+## 20.1. Tests fonctionnels
+
+Scénarios obligatoires :
+
+1. Un utilisateur crée un compte.
+2. Il crée un groupe familial.
+3. Il invite plusieurs membres.
+4. Un membre accepte l'invitation.
+5. Un administrateur ajoute un membre sans compte.
+6. Un membre externe participe à une dépense.
+7. Un membre enregistre une dépense.
+8. La dépense est payée par plusieurs personnes.
+9. Le système enregistre les montants avancés par chaque payeur.
+10. Le système calcule les parts.
+11. Chaque membre consulte son solde.
+12. Un membre déclare un remboursement.
+13. Le bénéficiaire confirme le remboursement.
+14. Les soldes sont actualisés.
+15. Un remboursement partiel est enregistré.
+16. Un administrateur consulte le rapport du groupe.
+17. Un utilisateur rejoint un deuxième groupe.
+18. Les opérations des deux groupes restent indépendantes.
+19. Un membre externe crée un compte et demande le rattachement de son historique.
+20. L'administrateur valide manuellement un abonnement.
+21. Les droits d'accès sont vérifiés pour chaque profil.
+
+## 20.2. Tests de calcul
+
+Vérifier notamment :
+
+- Répartition équitable.
+- Répartition personnalisée.
+- Répartition proportionnelle.
+- Gestion des arrondis.
+- Dépenses impliquant certains membres seulement.
+- Dépenses payées par plusieurs personnes.
+- Paiement partiel d'une dépense.
+- Modification d'une dépense.
+- Annulation d'une dépense.
+- Remboursements partiels.
+- Remboursements multiples.
+- Soldes positifs, négatifs et nuls.
+- Contributions déclarées et confirmées.
+- Absence de double comptabilisation.
+- Exactitude des calculs financiers.
+
+## 20.3. Tests de sécurité
+
+- Tentative d'accès à un groupe non autorisé.
+- Tentative de modification d'une dépense sans permission.
+- Tentative de confirmation frauduleuse d'un remboursement.
+- Accès à un justificatif privé.
+- Tentatives répétées de connexion.
+- Vérification des droits administratifs.
+- Vérification de l'isolation des groupes.
+- Vérification des droits des membres externes.
+- Vérification des rattachements de comptes.
+- Protection des variables d'environnement.
+- Vérification des endpoints sensibles.
+
+## 20.4. Tests techniques
+
+- Compilation du frontend.
+- Vérification TypeScript.
+- Validation du schéma Prisma.
+- Exécution des migrations.
+- Connexion à Neon.
+- Tests des transactions de base de données.
+- Tests des API.
+- Tests des tâches programmées.
+- Tests de génération des rapports.
+- Vérification du déploiement sur Vercel.
+- Vérification des environnements de production et de prévisualisation.
+
+## 20.5. Tests responsive
+
+L'interface doit être testée sur :
+
+- Ordinateurs.
+- Tablettes.
+- Smartphones.
+- Navigateurs modernes.
+- Différentes tailles d'écran.
+
+## 20.6. Critères d'acceptation
+
+Le produit sera considéré comme prêt pour un pilote lorsque :
+
+- Les principaux parcours fonctionnent.
+- Les calculs financiers sont corrects.
+- Les paiements multiples sont correctement pris en charge.
+- Les permissions sont respectées.
+- Les données des groupes sont isolées.
+- Les membres sans compte peuvent participer aux opérations prévues.
+- Les opérations importantes sont traçables.
+- L'interface fonctionne sur téléphone et ordinateur.
+- Les utilisateurs comprennent les soldes.
+- Les tests critiques ne présentent pas de défaut bloquant.
+- Le déploiement web fonctionne correctement.
+- La base de données est accessible et sécurisée.
+- Les procédures de sauvegarde sont documentées.
+
+---
+
+# 21. PLANNING PRÉVISIONNEL
+
+Durée indicative : environ 14 semaines pour une première version développée progressivement.
+
+| Phase | Activités | Durée indicative |
+|---|---|---|
+| 1 | Étude des besoins et validation du marché | 2 semaines |
+| 2 | Conception fonctionnelle et technique | 1 semaine |
+| 3 | Maquettes UI/UX et identité visuelle | 1 semaine |
+| 4 | Base de données, Prisma et authentification | 1 semaine |
+| 5 | Gestion des groupes et membres | 1 semaine |
+| 6 | Gestion des dépenses et moteur de calcul | 2 semaines |
+| 7 | Contributions et remboursements | 1 semaine |
+| 8 | Tableaux de bord et notifications | 1 semaine |
+| 9 | Tests et sécurisation | 2 semaines |
+| 10 | Déploiement et expérimentation | 2 semaines |
+
+Ce planning pourra être ajusté selon les résultats de l'étude terrain, la complexité des fonctionnalités et la disponibilité des ressources.
+
+Les fonctionnalités avancées qui ne sont pas indispensables au MVP ne doivent pas retarder inutilement le lancement de la première version.
+
+---
+
+# 22. STRATÉGIE DE VALIDATION DU MARCHÉ
+
+Avant le développement complet, une étude terrain devra être réalisée afin de vérifier les besoins réels et l'acceptation du produit.
+
+Le lancement initial se fera au Bénin.
+
+L'étude devra permettre de comprendre les pratiques actuelles de gestion des dépenses partagées et la volonté des utilisateurs de payer pour des fonctionnalités avancées.
+
+## 22.1. Public à interroger
+
+| Profil | Échantillon initial |
+|---|---:|
+| Familles et responsables de ménage | 15 |
+| Étudiants en colocation | 15 |
+| Couples | 5 |
+| Groupes d'amis | 5 |
+| Associations | 5 |
+| Petits groupes professionnels | 5 |
+| Total | 50 |
+
+Cet échantillon constitue une base de départ et pourra être élargi.
+
+## 22.2. Questions de recherche
+
+- Comment gérez-vous actuellement les dépenses communes ?
+- Qui prend généralement l'initiative de payer ?
+- Une même dépense est-elle parfois payée par plusieurs personnes ?
+- Comment répartissez-vous les contributions ?
+- Comment savez-vous qui a déjà payé ?
+- Avez-vous déjà rencontré des conflits financiers ?
+- Comment conservez-vous les preuves de paiement ?
+- Quel outil utilisez-vous actuellement ?
+- Quelles difficultés rencontrez-vous ?
+- Quelles fonctionnalités vous seraient réellement utiles ?
+- Seriez-vous prêt à utiliser une plateforme web pour cette gestion ?
+- Préférez-vous utiliser le service depuis un navigateur ou installer une application ?
+- Quelles fonctionnalités justifieraient un abonnement payant ?
+- Un abonnement de 500 FCFA par groupe et par mois serait-il acceptable ?
+- Dans quelles conditions un groupe accepterait-il de payer 1 000 FCFA par mois ?
+- Quels moyens de paiement utilisez-vous habituellement ?
+
+## 22.3. Expérimentation
+
+Un premier pilote pourra réunir :
+
+- 5 groupes familiaux.
+- 5 groupes étudiants.
+- 2 groupes de couples.
+- 2 associations.
+- 2 groupes d'amis.
+
+Chaque groupe utilisera Kpata pendant une période de 30 jours.
+
+Les résultats seront analysés à travers :
+
+- Le taux d'activation.
+- Le nombre de dépenses enregistrées.
+- Le nombre de dépenses comportant plusieurs payeurs.
+- La fréquence d'utilisation.
+- Le nombre de remboursements confirmés.
+- La rétention.
+- La satisfaction.
+- La facilité d'utilisation.
+- Le nombre de membres externes ajoutés.
+- La volonté de payer.
+- L'acceptation des tarifs proposés.
+
+## 22.4. Stratégie d'expansion africaine
+
+Après le pilote béninois, les résultats devront permettre d'identifier les marchés prioritaires.
+
+L'expansion devra être progressive.
+
+Pour chaque nouveau pays, une étude devra porter sur :
+
+- Les habitudes de gestion des dépenses collectives.
+- Les moyens de paiement utilisés.
+- Les devises.
+- Les langues.
+- Le pouvoir d'achat.
+- Les contraintes réglementaires.
+- Les infrastructures numériques.
+- Les possibilités de partenariats locaux.
+
+L'objectif est de construire une plateforme panafricaine réellement adaptée aux utilisateurs, plutôt que de déployer le même produit sans tenir compte des réalités locales.
+
+---
+
+# 23. LIVRABLES ATTENDUS
+
+À la fin du projet, les livrables suivants devront être disponibles :
+
+1. Cahier des charges fonctionnel.
+2. Cahier des charges technique.
+3. Rapport d'étude de marché.
+4. Identité visuelle et charte graphique.
+5. Maquettes UI/UX.
+6. Diagramme de cas d'utilisation.
+7. Diagramme de classes.
+8. Modèle conceptuel de données.
+9. Modèle logique de données.
+10. Schéma de base de données Prisma.
+11. Scripts de migration de la base de données.
+12. Code source frontend.
+13. Code source backend.
+14. Documentation des API et Route Handlers.
+15. Rapport de tests.
+16. Documentation technique.
+17. Documentation utilisateur.
+18. Guide d'administration.
+19. Guide d'installation locale.
+20. Guide de configuration Neon et Vercel.
+21. Fichier d'exemple des variables d'environnement.
+22. Application web déployée.
+23. Rapport d'expérimentation.
+24. Documentation des procédures de sauvegarde et de restauration.
+
+---
+
+# 24. RISQUES ET MESURES DE PRÉVENTION
+
+| Risque | Mesure de prévention |
+|---|---|
+| Faible adoption | Étude terrain et tests utilisateurs |
+| Manque de confiance | Transparence et historique vérifiable |
+| Mauvais calculs | Tests automatisés des règles financières |
+| Conflits entre membres | Confirmation et contestation des opérations |
+| Connexion instable | PWA et synchronisation contrôlée |
+| Accès non autorisé | Permissions et isolation des groupes |
+| Coûts d'exploitation élevés | Développement progressif et surveillance des coûts |
+| Difficulté de monétisation | Offre gratuite et tests tarifaires |
+| Trop de fonctionnalités | Priorisation du MVP |
+| Contraintes réglementaires | Vérification de conformité avant les intégrations financières |
+| Erreurs liées aux paiements multiples | Modèle de données séparant les payeurs et les parts |
+| Doublons de membres | Procédure sécurisée de rattachement des comptes |
+| Perte de justificatifs | Stockage externe et sauvegardes |
+| Connexions excessives à PostgreSQL | Configuration adaptée à Neon et Prisma |
+| Tâches asynchrones non exécutées | Utilisation de mécanismes compatibles avec Vercel |
+| Fuite de données entre groupes | Vérification systématique des autorisations côté serveur |
+| Erreurs d'arrondi | Types numériques précis et tests financiers |
+| Prix trop élevés pour les utilisateurs | Tarification par groupe et étude du pouvoir d'achat |
+| Difficulté d'expansion dans d'autres pays | Adaptation progressive des devises, langues et moyens de paiement |
+| Dépendance à un fournisseur technique | Architecture documentée et choix de services remplaçables lorsque possible |
+
+---
+
+# 25. CONCLUSION ET POSITIONNEMENT FINAL
+
+Kpata ambitionne de devenir une plateforme web de gestion financière collaborative accessible à toutes les personnes qui partagent des dépenses, des contributions ou des responsabilités financières.
+
+Sa particularité repose sur un système universel de groupes permettant à chaque utilisateur de gérer plusieurs communautés sans mélanger leurs opérations.
+
+Qu'il s'agisse d'une famille qui organise les dépenses du ménage, d'étudiants qui partagent un appartement, d'un couple qui répartit ses charges, d'une association qui collecte des cotisations ou d'un groupe d'amis qui organise un voyage, Kpata doit offrir un espace adapté à leurs besoins.
+
+La plateforme doit également permettre à des personnes qui ne possèdent pas encore de compte de participer à la gestion financière d'un groupe, sans perdre la possibilité de rattacher ultérieurement leur historique à un compte personnel.
+
+La gestion des dépenses doit être suffisamment flexible pour prendre en charge plusieurs payeurs, différentes méthodes de répartition, des contributions partielles et des remboursements confirmés ou contestés.
+
+Le projet ne doit pas se limiter à un simple calculateur de dettes. Il doit constituer un véritable outil d'organisation financière collective, fondé sur la transparence, la traçabilité, la simplicité et la confiance.
+
+Le choix de Next.js, Node.js, TypeScript, Prisma et PostgreSQL hébergé sur Neon doit permettre de construire une architecture web moderne, maintenable et adaptée au déploiement sur Vercel.
+
+Kpata doit d'abord être développé et testé au Bénin, puis évoluer progressivement vers les autres pays d'Afrique en tenant compte des besoins locaux, des devises, des langues, des moyens de paiement et du pouvoir d'achat.
+
+La tarification doit rester accessible. Le modèle économique doit privilégier une offre gratuite utile et des abonnements abordables facturés par groupe plutôt que par membre.
+
+**Positionnement final :**
+
+Kpata — La plateforme qui simplifie la gestion de l'argent partagé.
+
+**Signature proposée :**
+
+« Ensemble, gérons mieux notre argent. »
+
+**Ambition :**
+
+Commencer au Bénin, répondre aux besoins réels des communautés locales et évoluer progressivement vers une solution panafricaine de gestion collaborative des finances quotidiennes.
+
+---
+
+**Fin du cahier des charges — Version 1.1 révisée**

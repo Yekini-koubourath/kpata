@@ -1,0 +1,427 @@
+// ==============================================================================
+// KPATA — Schéma Prisma complet pour PostgreSQL / Neon (Déploiement Vercel)
+// ==============================================================================
+// Note : Pour l'environnement local AI Studio Preview, le serveur Express utilise
+// SQLite (better-sqlite3) avec un schéma strictement miroir afin d'offrir une
+// persistance immédiate sans base Neon externe. Ce schéma Prisma et sa migration
+// SQL sont prêts pour la mise en production sur Neon + Vercel.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum GlobalRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum GroupType {
+  FAMILLE
+  FOYER
+  COUPLE
+  COLOCATION
+  AMIS
+  ASSOCIATION
+  ORGANISATION
+  PROFESSIONNEL
+  VOYAGE
+  EVENEMENT
+  COMMUNAUTE
+  AUTRE
+}
+
+enum GroupRole {
+  OWNER
+  ADMIN
+  TREASURER
+  MEMBER
+  OBSERVER
+}
+
+enum MemberStatus {
+  ACTIVE
+  SUSPENDED
+  LEFT
+}
+
+enum GroupVisibility {
+  PRIVATE
+  LINK
+  PUBLIC
+}
+
+enum GroupStatus {
+  ACTIVE
+  ARCHIVED
+  CLOSED
+}
+
+enum SplitMethod {
+  EQUAL
+  CUSTOM
+  PERCENTAGE
+  WEIGHT
+  PARTICIPATION
+  FIXED
+}
+
+enum ExpenseScope {
+  COLLECTIVE
+  PARTIAL
+  PERSONAL
+}
+
+enum ExpensePaymentStatus {
+  RECORDED
+  PARTIAL
+  PAID
+}
+
+enum ExpenseStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum SettlementStatus {
+  PENDING
+  CONFIRMED
+  DISPUTED
+  CANCELLED
+}
+
+enum ContributionPaymentStatus {
+  DECLARED
+  CONFIRMED
+  DISPUTED
+  CANCELLED
+}
+
+enum SubscriptionPlanCode {
+  FREE
+  PREMIUM
+  ORG
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PENDING_PAYMENT
+  EXPIRED
+  SUSPENDED
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  firstName     String
+  lastName      String
+  phone         String?
+  passwordHash  String
+  role          GlobalRole @default(USER)
+  emailVerified Boolean    @default(false)
+  preferredLang String     @default("fr")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  sessions      Session[]
+  memberships   GroupMember[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  userAgent String?
+  ipHash    String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Group {
+  id          String          @id @default(cuid())
+  name        String
+  type        GroupType       @default(FAMILLE)
+  description String?
+  country     String          @default("BJ")
+  currency    String          @default("XOF")
+  timezone    String          @default("Africa/Porto-Novo")
+  visibility  GroupVisibility @default(PRIVATE)
+  status      GroupStatus     @default(ACTIVE)
+  createdById String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  members           GroupMember[]
+  invitations       GroupInvitation[]
+  categories        ExpenseCategory[]
+  expenses          Expense[]
+  contributionPlans ContributionPlan[]
+  settlements       Settlement[]
+  budgets           Budget[]
+  savingsGoals      SavingsGoal[]
+  subscription      Subscription?
+}
+
+model GroupMember {
+  id             String       @id @default(cuid())
+  groupId        String
+  group          Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId         String?
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  familyRelation String?
+  role           GroupRole    @default(MEMBER)
+  status         MemberStatus @default(ACTIVE)
+  isExternal     Boolean      @default(false)
+  joinedAt       DateTime     @default(now())
+
+  paidExpenses   ExpensePayer[]
+  expenseShares  ExpenseShare[]
+  contributions  Contribution[]
+  sentSettlements     Settlement[] @relation("DebtorSettlements")
+  receivedSettlements Settlement[] @relation("CreditorSettlements")
+
+  @@index([groupId])
+  @@index([userId])
+}
+
+model GroupInvitation {
+  id          String    @id @default(cuid())
+  groupId     String
+  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  invitedById String
+  email       String?
+  phone       String?
+  token       String    @unique
+  code        String    @unique
+  role        GroupRole @default(MEMBER)
+  status      String    @default("PENDING")
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+}
+
+model ExpenseCategory {
+  id       String  @id @default(cuid())
+  groupId  String?
+  group    Group?  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name     String
+  isActive Boolean @default(true)
+}
+
+model Expense {
+  id                String               @id @default(cuid())
+  groupId           String
+  group             Group                @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  title             String
+  description       String?
+  amountInt         Int
+  currency          String               @default("XOF")
+  expenseDate       DateTime
+  categoryId        String?
+  scope             ExpenseScope         @default(COLLECTIVE)
+  splitMethod       SplitMethod          @default(EQUAL)
+  paymentStatus     ExpensePaymentStatus @default(PAID)
+  status            ExpenseStatus        @default(ACTIVE)
+  isRecurring       Boolean              @default(false)
+  recurrenceFreq    String?
+  nextOccurrence    DateTime?
+  createdByMemberId String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  payers   ExpensePayer[]
+  shares   ExpenseShare[]
+  comments ExpenseComment[]
+
+  @@index([groupId, expenseDate])
+}
+
+model ExpensePayer {
+  id            String      @id @default(cuid())
+  expenseId     String
+  expense       Expense     @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  memberId      String
+  member        GroupMember @relation(fields: [memberId], references: [id])
+  amountPaidInt Int
+}
+
+model ExpenseShare {
+  id             String      @id @default(cuid())
+  expenseId      String
+  expense        Expense     @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  memberId       String
+  member         GroupMember @relation(fields: [memberId], references: [id])
+  shareAmountInt Int
+  weightOrPctNum Int         @default(1)
+}
+
+model ExpenseComment {
+  id        String   @id @default(cuid())
+  expenseId String
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  memberId  String
+  userId    String?
+  content   String
+  isDispute Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ContributionPlan {
+  id                 String   @id @default(cuid())
+  groupId            String
+  group              Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name               String
+  objective          String?
+  targetAmountInt    Int
+  amountPerMemberInt Int
+  frequency          String   @default("ONCE")
+  startDate          DateTime
+  dueDate            DateTime?
+  currency           String   @default("XOF")
+  status             String   @default("ACTIVE")
+  createdAt          DateTime @default(now())
+
+  contributions Contribution[]
+}
+
+model Contribution {
+  id                String      @id @default(cuid())
+  planId            String
+  plan              ContributionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  groupId           String
+  memberId          String
+  member            GroupMember @relation(fields: [memberId], references: [id])
+  expectedAmountInt Int
+  status            String      @default("EXPECTED")
+
+  payments ContributionPayment[]
+}
+
+model ContributionPayment {
+  id                String                    @id @default(cuid())
+  contributionId    String
+  contribution      Contribution              @relation(fields: [contributionId], references: [id], onDelete: Cascade)
+  amountInt         Int
+  paymentMethod     String
+  reference         String?
+  note              String?
+  status            ContributionPaymentStatus @default(DECLARED)
+  declaredByUserId  String?
+  confirmedByUserId String?
+  disputeReason     String?
+  createdAt         DateTime                  @default(now())
+  confirmedAt       DateTime?
+}
+
+model Settlement {
+  id                String           @id @default(cuid())
+  groupId           String
+  group             Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  fromMemberId      String
+  fromMember        GroupMember      @relation("DebtorSettlements", fields: [fromMemberId], references: [id])
+  toMemberId        String
+  toMember          GroupMember      @relation("CreditorSettlements", fields: [toMemberId], references: [id])
+  amountInt         Int
+  currency          String           @default("XOF")
+  settlementDate    DateTime
+  paymentMethod     String
+  reference         String?
+  note              String?
+  status            SettlementStatus @default(PENDING)
+  disputeReason     String?
+  declaredByUserId  String?
+  confirmedByUserId String?
+  createdAt         DateTime         @default(now())
+  confirmedAt       DateTime?
+}
+
+model Budget {
+  id                  String   @id @default(cuid())
+  groupId             String
+  group               Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  categoryId          String?
+  periodType          String   @default("MONTHLY")
+  startDate           DateTime
+  endDate             DateTime
+  limitAmountInt      Int
+  alertThresholdsJson String   @default("[50,75,90,100]")
+  createdAt           DateTime @default(now())
+}
+
+model SavingsGoal {
+  id              String   @id @default(cuid())
+  groupId         String
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  title           String
+  targetAmountInt Int
+  deadline        DateTime?
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId   String?
+  type      String
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model Subscription {
+  id        String               @id @default(cuid())
+  groupId   String               @unique
+  group     Group                @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  planCode  SubscriptionPlanCode @default(FREE)
+  status    SubscriptionStatus   @default(ACTIVE)
+  startDate DateTime             @default(now())
+  endDate   DateTime?
+  autoRenew Boolean              @default(false)
+  updatedAt DateTime             @updatedAt
+}
+
+model PaymentTransaction {
+  id            String   @id @default(cuid())
+  groupId       String
+  provider      String
+  providerTxId  String?  @unique
+  idempotencyKey String  @unique
+  amountInt     Int
+  currency      String   @default("XOF")
+  paymentMethod String?
+  status        String   @default("PENDING")
+  rawPayloadJson String?
+  verifiedAt    DateTime?
+  createdAt     DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  actor       User?    @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  groupId     String?
+  action      String
+  targetType  String
+  targetId    String
+  detailsJson String?
+  ipHash      String?
+  createdAt   DateTime @default(now())
+}
