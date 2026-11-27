@@ -352,7 +352,7 @@ adminRouter.get('/bootstrap-status', (req: AuthedRequest, res) => {
 
 adminRouter.post('/bootstrap', rateLimit('admin_boot', 15, 60_000), (req: AuthedRequest, res) => {
   const schema = z.object({
-    passcode: z.string().min(8, 'Le code d’administration doit contenir au moins 8 caractères.').max(128),
+    passcode: z.string().min(8, 'Le mot de passe ou code d’administration doit contenir au moins 8 caractères.').max(128),
     email: z.string().email().optional(),
   });
   const parsed = schema.safeParse(req.body);
@@ -371,25 +371,37 @@ adminRouter.post('/bootstrap', rateLimit('admin_boot', 15, 60_000), (req: Authed
   // Case 1: env passcode is configured — verify against it
   if (envPasscode && envPasscode.length > 0) {
     if (parsed.data.passcode !== envPasscode) {
-      res.status(401).json({ error: 'Code administrateur invalide.' });
+      res.status(401).json({ error: 'Identifiants ou code administrateur invalide.' });
       return;
     }
   } else if (storedHashRow) {
     // Case 2: claimed hash exists — verify against it
     if (!verifyPassword(parsed.data.passcode, storedHashRow.value)) {
-      res.status(401).json({ error: 'Code administrateur invalide.' });
+      res.status(401).json({ error: 'Mot de passe ou code administrateur invalide.' });
       return;
     }
   } else {
-    // Case 3: first-run claim — atomically store hashed admin passcode
-    const hasAdmin = db.prepare("SELECT id FROM users WHERE role IN ('ADMIN', 'SUPER_ADMIN')").get();
-    if (hasAdmin) {
-      res.status(403).json({ error: 'Un administrateur existe déjà. Connectez-vous avec ce compte.' });
-      return;
+    // Case 3: Check existing seeded/created admin account by email + password, or first-run claim
+    const requestedEmail = (parsed.data.email || req.user?.email || 'admin@kpata.bj').trim().toLowerCase();
+    const adminByEmail = db
+      .prepare("SELECT id, password_hash as passwordHash, role FROM users WHERE email = ? AND role IN ('ADMIN', 'SUPER_ADMIN')")
+      .get(requestedEmail) as { id: string; passwordHash: string; role: string } | undefined;
+
+    if (adminByEmail) {
+      if (!verifyPassword(parsed.data.passcode, adminByEmail.passwordHash)) {
+        res.status(401).json({ error: 'Mot de passe administrateur incorrect.' });
+        return;
+      }
+    } else {
+      const anyAdmin = db.prepare("SELECT id FROM users WHERE role IN ('ADMIN', 'SUPER_ADMIN')").get();
+      if (anyAdmin) {
+        res.status(401).json({ error: 'Compte ou mot de passe administrateur invalide.' });
+        return;
+      }
+      db.prepare(
+        `INSERT INTO system_config (key, value, updated_at) VALUES ('admin_passcode_hash', ?, ?)`
+      ).run(hashPassword(parsed.data.passcode), nowIso);
     }
-    db.prepare(
-      `INSERT INTO system_config (key, value, updated_at) VALUES ('admin_passcode_hash', ?, ?)`
-    ).run(hashPassword(parsed.data.passcode), nowIso);
   }
 
   // Promote current user OR create/elevate admin account

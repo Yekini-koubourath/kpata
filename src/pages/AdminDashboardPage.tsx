@@ -5,12 +5,15 @@ import {
   CheckCircle2,
   CreditCard,
   Globe,
+  KeyRound,
+  Lock,
   LogOut,
   Megaphone,
   Monitor,
   RefreshCw,
   Search,
   ShieldCheck,
+  Sparkles,
   Trash2,
   Users,
   XCircle,
@@ -28,13 +31,14 @@ import { motion } from 'motion/react';
 import { apiFetch } from '../lib/api';
 import { Link, useRouter } from '../lib/router';
 import { useAuth } from '../context/AuthContext';
+import { PasswordInput } from '../components/PasswordInput';
 import { formatMoney, GROUP_TYPES } from '../shared/types';
 
 type AdminTab = 'analytics' | 'overview' | 'subscriptions' | 'users' | 'audit';
 type Period = 'day' | 'week' | 'month' | 'year';
 
 export function AdminDashboardPage() {
-  const { user, setDirectSession, logout, refreshUser } = useAuth();
+  const { user, login, setDirectSession, logout, refreshUser } = useAuth();
   const { navigate } = useRouter();
 
   const [bootStatus, setBootStatus] = useState<{
@@ -142,18 +146,32 @@ export function AdminDashboardPage() {
     setAuthError('');
     setAuthSubmitting(true);
     try {
+      const targetEmail = (adminEmail || user?.email || 'admin@kpata.bj').trim();
       const res = await apiFetch<{ token: string; user: any }>('/api/admin/bootstrap', {
         method: 'POST',
         body: JSON.stringify({
           passcode,
-          email: user?.email || adminEmail,
+          email: targetEmail,
         }),
       });
       setDirectSession(res.user, res.token);
       await refreshUser();
       await checkBootstrap();
     } catch (err: any) {
-      setAuthError(err?.message || 'Vérification administrateur impossible.');
+      setAuthError(err?.message || 'Identifiants administrateur invalides.');
+    } finally {
+      setAuthSubmitting(false);
+    }
+  };
+
+  const handleQuickAdminLogin = async () => {
+    setAuthError('');
+    setAuthSubmitting(true);
+    try {
+      await login('admin@kpata.bj', 'KpataAdmin2026!');
+      await checkBootstrap();
+    } catch (err: any) {
+      setAuthError(err?.message || 'Connexion administrateur impossible.');
     } finally {
       setAuthSubmitting(false);
     }
@@ -222,42 +240,86 @@ export function AdminDashboardPage() {
 
   if (!bootStatus) {
     return (
-      <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center p-6">
-        <div className="text-sm text-stone-600">Chargement de l’espace d’administration...</div>
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
+        <div className="bg-white border border-emerald-950/10 rounded-2xl px-6 py-4 shadow-sm text-sm font-medium text-emerald-950">
+          Chargement de l’espace d’administration KPATA...
+        </div>
       </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#FAF9F6] flex flex-col justify-center items-center px-4 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-[#042F24] via-[#064E3B] to-[#0F766E] flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-amber-400/15 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-emerald-400/15 blur-3xl"
+        />
+
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-md bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 space-y-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-md bg-white border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl"
         >
           <div className="flex items-center justify-between">
-            <Link to="/" className="font-display text-lg font-bold text-stone-900">
-              KPATA
+            <Link to="/" className="inline-flex items-center gap-2 font-display text-xl font-extrabold text-slate-900">
+              <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white inline-flex items-center justify-center text-sm font-bold shadow-sm">
+                K
+              </span>
+              <span>KPATA</span>
             </Link>
-            <span className="text-xs font-semibold text-emerald-800">
-              Espace Propriétaire · Admin
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded-lg">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Espace Propriétaire</span>
             </span>
           </div>
 
           <div className="space-y-2">
-            <h1 className="font-display text-xl font-bold text-stone-900">
+            <h1 className="font-display text-2xl font-extrabold text-slate-900">
               {bootStatus.needsInitialSetup
-                ? 'Initialiser votre accès propriétaire KPATA'
-                : 'Espace Propriétaire & Administration'}
+                ? 'Initialiser l’accès propriétaire KPATA'
+                : 'Connexion Administrateur Principal'}
             </h1>
-            <p className="text-sm text-stone-600 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed">
               {bootStatus.needsInitialSetup
-                ? 'Premier accès : saisissez votre adresse e-mail de propriétaire et choisissez un mot de passe (8 caractères min.). Ces identifiants créeront votre compte SUPER_ADMIN pour accéder à cet espace ainsi qu’à /connexion.'
-                : 'Saisissez votre mot de passe administrateur (ou connectez-vous depuis /connexion avec votre compte propriétaire) pour piloter les offres, paiements et statistiques.'}
+                ? 'Premier accès : saisissez votre e-mail propriétaire et choisissez un mot de passe (8 caractères min.) pour créer votre compte SUPER_ADMIN.'
+                : 'Connectez-vous avec votre compte propriétaire pour piloter les statistiques du site, les abonnements, les tarifs et les utilisateurs.'}
             </p>
           </div>
+
+          {!bootStatus.needsInitialSetup && (
+            <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50/70 border border-amber-300/80 p-4 space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-950">
+                  <KeyRound className="w-4 h-4 text-amber-700" />
+                  <span>Identifiants Administrateur Pilote</span>
+                </span>
+                <span className="text-[11px] font-semibold text-amber-800">SUPER_ADMIN</span>
+              </div>
+              <div className="text-xs text-slate-800 font-mono bg-white/90 border border-amber-200 rounded-xl px-3 py-2 space-y-1">
+                <div>
+                  E-mail : <strong className="text-slate-950">admin@kpata.bj</strong>
+                </div>
+                <div>
+                  Mot de passe : <strong className="text-slate-950">KpataAdmin2026!</strong>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={authSubmitting}
+                onClick={handleQuickAdminLogin}
+                className="w-full py-2.5 px-4 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-colors shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Se connecter en Admin Pilote (1 clic)</span>
+              </button>
+            </div>
+          )}
 
           {authError && (
             <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800">
@@ -266,54 +328,55 @@ export function AdminDashboardPage() {
           )}
 
           <form onSubmit={handleBootstrapSubmit} className="space-y-4">
-            {!user && (
-              <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">E-mail propriétaire</span>
-                <input
-                  type="email"
-                  required
-                  value={adminEmail}
-                  onChange={(e) => setAdminEmail(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
-                />
-              </label>
-            )}
+            <label className="block space-y-1.5 text-sm">
+              <span className="font-medium text-slate-700">E-mail propriétaire</span>
+              <input
+                type="email"
+                required
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@kpata.bj"
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+            </label>
 
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">
+              <span className="font-medium text-slate-700">
                 {bootStatus.needsInitialSetup
                   ? 'Mot de passe propriétaire (8 caractères min.)'
-                  : 'Mot de passe / code d’administration'}
+                  : 'Mot de passe administrateur'}
               </span>
-              <input
-                type="password"
+              <PasswordInput
                 required
                 minLength={8}
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                placeholder="KpataAdmin2026!"
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
 
             <button
               type="submit"
               disabled={authSubmitting}
-              className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 disabled:opacity-50 transition-colors"
+              className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl hover:from-emerald-800 hover:to-teal-800 disabled:opacity-50 transition-all shadow-sm inline-flex items-center justify-center gap-2"
             >
-              {authSubmitting
-                ? 'Vérification...'
-                : bootStatus.needsInitialSetup
-                ? 'Créer mon accès propriétaire'
-                : 'Accéder à l’administration'}
+              <Lock className="w-4 h-4" />
+              <span>
+                {authSubmitting
+                  ? 'Vérification...'
+                  : bootStatus.needsInitialSetup
+                  ? 'Créer mon accès propriétaire'
+                  : 'Accéder au tableau de bord admin'}
+              </span>
             </button>
           </form>
 
-          <div className="pt-3 border-t border-stone-200 flex items-center justify-between text-xs text-stone-500">
-            <Link to="/app" className="hover:text-stone-900">
+          <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+            <Link to="/app" className="hover:text-emerald-800 font-medium">
               Espace personnel
             </Link>
-            <Link to="/" className="hover:text-stone-900">
+            <Link to="/" className="hover:text-emerald-800 font-medium">
               Retour à l’accueil
             </Link>
           </div>
@@ -345,23 +408,26 @@ export function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-stone-900">
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900">
+      <header className="sticky top-0 z-30 bg-[#042F24] text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 min-w-0">
-            <Link to="/" className="font-display text-lg font-bold text-stone-900 shrink-0">
-              KPATA
+          <div className="flex items-center gap-3 min-w-0">
+            <Link to="/" className="inline-flex items-center gap-2 font-display text-lg font-extrabold text-white shrink-0">
+              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-amber-400 text-[#042F24] inline-flex items-center justify-center text-xs font-extrabold">
+                K
+              </span>
+              <span>KPATA</span>
             </Link>
-            <span className="text-stone-300 hidden sm:inline">·</span>
-            <span className="text-sm font-semibold text-emerald-800 truncate hidden sm:inline">
+            <span className="text-emerald-700 hidden sm:inline">·</span>
+            <span className="text-sm font-semibold text-amber-300 truncate hidden sm:inline">
               Espace Propriétaire KPATA · Administration centrale
             </span>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             <Link
               to="/app"
-              className="px-3 py-1.5 text-xs font-medium text-stone-700 border border-stone-200 rounded-xl hover:bg-stone-50"
+              className="px-3.5 py-1.5 text-xs font-semibold text-emerald-100 border border-emerald-700/80 rounded-xl hover:bg-emerald-900/70 transition-colors"
             >
               Espace utilisateur
             </Link>
@@ -371,7 +437,7 @@ export function AdminDashboardPage() {
                 await logout();
                 navigate('/connexion');
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-700 border border-stone-200 rounded-xl hover:bg-stone-50"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-950 bg-amber-400 rounded-xl hover:bg-amber-300 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Déconnexion</span>
@@ -379,56 +445,67 @@ export function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Sub-navigation tabs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto border-t border-stone-100">
-          {tabs.map((t) => {
-            const Icon = t.icon;
-            const active = tab === t.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                className={`inline-flex items-center gap-2 px-3.5 py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
-                  active
-                    ? 'border-emerald-800 text-emerald-900 font-semibold'
-                    : 'border-transparent text-stone-600 hover:text-stone-950'
-                }`}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                <span>{t.label}</span>
-              </button>
-            );
-          })}
+        {/* Sub-navigation tabs with animated indicator */}
+        <div className="bg-[#064E3B]/70 border-t border-emerald-800/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto">
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setTab(t.id)}
+                  className={`relative inline-flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
+                    active ? 'text-white font-semibold' : 'text-emerald-100/75 hover:text-white'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-amber-300' : ''}`} />
+                  <span>{t.label}</span>
+                  {active && (
+                    <motion.span
+                      layoutId="admin-tab-indicator"
+                      transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                      className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-amber-400"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {actionMsg && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-900 flex items-center justify-between">
-            <span>{actionMsg}</span>
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-sm text-emerald-950 flex items-center justify-between shadow-xs"
+          >
+            <span className="font-medium">{actionMsg}</span>
             <button
               type="button"
               onClick={() => setActionMsg('')}
-              className="text-xs font-semibold text-emerald-800 hover:underline"
+              className="text-xs font-bold text-emerald-800 hover:underline"
             >
               Fermer
             </button>
-          </div>
+          </motion.div>
         )}
 
-        {/* TAB 1: STATISTIQUES DU SITE (MANDATORY MODULE) */}
+        {/* TAB 1: STATISTIQUES DU SITE */}
         {tab === 'analytics' && (
           <motion.div
             key="tab-analytics"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-6"
           >
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+                <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900">
                   Statistiques du site & Visibilité SEO
                 </h1>
                 <p className="text-sm text-slate-600 mt-1">
@@ -437,7 +514,7 @@ export function AdminDashboardPage() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {(
                   [
                     ['day', 'Jour (24h)'],
@@ -450,10 +527,10 @@ export function AdminDashboardPage() {
                     key={p}
                     type="button"
                     onClick={() => setPeriod(p)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                    className={`px-3.5 py-1.5 text-xs font-semibold rounded-xl border transition-all ${
                       period === p
-                        ? 'bg-emerald-700 text-white border-emerald-700'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                        ? 'bg-gradient-to-r from-emerald-700 to-teal-700 text-white border-emerald-700 shadow-xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:border-emerald-300'
                     }`}
                   >
                     {label}
@@ -462,7 +539,7 @@ export function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => loadAnalytics(period)}
-                  className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50"
+                  className="p-2 bg-white border border-slate-200 rounded-xl text-emerald-800 hover:bg-emerald-50 transition-colors"
                   aria-label="Actualiser les statistiques"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -472,114 +549,80 @@ export function AdminDashboardPage() {
 
             {/* External SEO / GA4 Configuration Status */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+              <div className="bg-gradient-to-br from-emerald-50/70 to-white border border-emerald-200/80 rounded-2xl p-4 space-y-1.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-emerald-900">
                   <span>GOOGLE ANALYTICS 4 (GA4)</span>
-                  <span
-                    className={
-                      siteStats?.ga4?.configured ? 'text-emerald-700' : 'text-amber-700'
-                    }
-                  >
+                  <span className={siteStats?.ga4?.configured ? 'text-emerald-700' : 'text-amber-700'}>
                     {siteStats?.ga4?.configured ? 'Configuré' : 'À configurer'}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-semibold text-slate-900">
                   {siteStats?.ga4?.configured
                     ? `ID de mesure : ${siteStats.ga4.measurementIdMasked}`
                     : 'Définir VITE_GA_MEASUREMENT_ID dans les variables Vercel'}
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600">
                   Collecte soumise au consentement visiteur (Consent Mode v2).
                 </p>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+              <div className="bg-gradient-to-br from-sky-50/70 to-white border border-sky-200/80 rounded-2xl p-4 space-y-1.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-sky-900">
                   <span>GOOGLE SEARCH CONSOLE</span>
-                  <span
-                    className={
-                      publicConfig?.searchConsoleConfigured ? 'text-emerald-700' : 'text-amber-700'
-                    }
-                  >
+                  <span className={publicConfig?.searchConsoleConfigured ? 'text-emerald-700' : 'text-amber-700'}>
                     {publicConfig?.searchConsoleConfigured ? 'Balise présente' : 'À vérifier'}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-semibold text-slate-900">
                   Sitemap dynamique : <span className="font-mono text-xs">/sitemap.xml</span>
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600">
                   Renseigner GOOGLE_SITE_VERIFICATION ou DNS TXT dans Search Console.
                 </p>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+              <div className="bg-gradient-to-br from-amber-50/70 to-white border border-amber-200/80 rounded-2xl p-4 space-y-1.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-amber-900">
                   <span>BING WEBMASTER & ROBOTS</span>
-                  <span
-                    className={
-                      publicConfig?.bingConfigured ? 'text-emerald-700' : 'text-slate-600'
-                    }
-                  >
+                  <span className={publicConfig?.bingConfigured ? 'text-emerald-700' : 'text-slate-700'}>
                     {publicConfig?.bingConfigured ? 'Balise présente' : 'Prêt (/robots.txt)'}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-semibold text-slate-900">
                   Routes privées protégées (noindex)
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600">
                   /app, /admin, /connexion et données financières bloqués à l’indexation.
                 </p>
               </div>
             </div>
 
             {/* Primary Traffic KPIs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Visiteurs totaux</p>
-                <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
-                  {metrics.totalVisitors ?? 0}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Visiteurs uniques</p>
-                <p className="font-mono text-2xl font-bold text-emerald-700 mt-1 tabular-nums">
-                  {metrics.uniqueVisitors ?? 0}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Visites (sessions)</p>
-                <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
-                  {metrics.totalSessions ?? 0}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Actifs (5 min)</p>
-                <p className="font-mono text-2xl font-bold text-emerald-700 mt-1 tabular-nums">
-                  {metrics.activeVisitors ?? 0}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Pages consultées</p>
-                <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
-                  {metrics.totalPageviews ?? 0}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Durée moyenne</p>
-                <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
-                  {formatDuration(metrics.avgDurationSec)}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500">Taux d’engagement</p>
-                <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
-                  {metrics.engagementRatePct ?? 0}%
-                </p>
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5">
+              {[
+                { label: 'Visiteurs totaux', value: metrics.totalVisitors ?? 0, tone: 'text-slate-900 border-slate-200 bg-white' },
+                { label: 'Visiteurs uniques', value: metrics.uniqueVisitors ?? 0, tone: 'text-emerald-700 border-emerald-200 bg-emerald-50/40' },
+                { label: 'Visites (sessions)', value: metrics.totalSessions ?? 0, tone: 'text-teal-800 border-teal-200 bg-teal-50/40' },
+                { label: 'Actifs (5 min)', value: metrics.activeVisitors ?? 0, tone: 'text-amber-700 border-amber-200 bg-amber-50/50' },
+                { label: 'Pages consultées', value: metrics.totalPageviews ?? 0, tone: 'text-sky-800 border-sky-200 bg-sky-50/40' },
+                { label: 'Durée moyenne', value: formatDuration(metrics.avgDurationSec), tone: 'text-slate-900 border-slate-200 bg-white' },
+                { label: 'Taux d’engagement', value: `${metrics.engagementRatePct ?? 0}%`, tone: 'text-emerald-800 border-emerald-200 bg-emerald-50/40' },
+              ].map((kpi, idx) => (
+                <motion.div
+                  key={kpi.label}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: idx * 0.03 }}
+                  className={`border rounded-2xl p-4 shadow-xs ${kpi.tone}`}
+                >
+                  <p className="text-xs font-medium text-slate-600">{kpi.label}</p>
+                  <p className="font-mono text-2xl font-extrabold mt-1 tabular-nums">{kpi.value}</p>
+                </motion.div>
+              ))}
             </div>
 
             {/* Timeline Chart */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-display text-base font-bold text-slate-900">
                   Évolution du trafic (Visites vs Visiteurs uniques)
@@ -590,7 +633,7 @@ export function AdminDashboardPage() {
               </div>
 
               {(siteStats?.timeline || []).length === 0 ? (
-                <div className="h-56 flex items-center justify-center text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg">
+                <div className="h-56 flex items-center justify-center text-sm text-slate-500 border border-dashed border-slate-200 rounded-xl">
                   Aucune visite enregistrée sur cette période. Naviguez sur les pages publiques
                   pour observer la télémétrie en temps réel.
                 </div>
@@ -598,6 +641,16 @@ export function AdminDashboardPage() {
                 <div className="h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={siteStats.timeline}>
+                      <defs>
+                        <linearGradient id="kpataSessionsFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.35} />
+                          <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.02} />
+                        </linearGradient>
+                        <linearGradient id="kpataUniqueFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#059669" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="#059669" stopOpacity={0.04} />
+                        </linearGradient>
+                      </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                       <XAxis dataKey="bucket" tick={{ fontSize: 11, fill: '#64748B' }} />
                       <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#64748B' }} />
@@ -606,17 +659,17 @@ export function AdminDashboardPage() {
                         type="monotone"
                         dataKey="sessions"
                         name="Visites (sessions)"
-                        stroke="#0F172A"
-                        fill="#CBD5E1"
-                        fillOpacity={0.35}
+                        stroke="#D97706"
+                        strokeWidth={2}
+                        fill="url(#kpataSessionsFill)"
                       />
                       <Area
                         type="monotone"
                         dataKey="uniqueVisitors"
                         name="Visiteurs uniques"
-                        stroke="#047857"
-                        fill="#10B981"
-                        fillOpacity={0.25}
+                        stroke="#059669"
+                        strokeWidth={2.5}
+                        fill="url(#kpataUniqueFill)"
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -626,8 +679,7 @@ export function AdminDashboardPage() {
 
             {/* Breakdown Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Top pages */}
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs">
                 <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
                   <Search className="w-4 h-4 text-emerald-700" />
                   <span>Pages les plus visitées</span>
@@ -639,7 +691,7 @@ export function AdminDashboardPage() {
                     siteStats.topPages.map((p: any) => (
                       <div key={p.path} className="py-2.5 flex items-center justify-between text-sm">
                         <span className="font-mono text-xs text-slate-800 truncate">{p.path}</span>
-                        <span className="font-mono font-semibold text-slate-900 tabular-nums">
+                        <span className="font-mono font-bold text-emerald-800 tabular-nums">
                           {p.views} vues
                         </span>
                       </div>
@@ -648,10 +700,9 @@ export function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Sources de trafic */}
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs">
                 <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-emerald-700" />
+                  <Globe className="w-4 h-4 text-sky-700" />
                   <span>Sources de trafic</span>
                 </h3>
                 <div className="divide-y divide-slate-100">
@@ -660,8 +711,8 @@ export function AdminDashboardPage() {
                   ) : (
                     siteStats.sources.map((s: any) => (
                       <div key={s.source} className="py-2.5 flex items-center justify-between text-sm">
-                        <span className="text-slate-700">{s.source}</span>
-                        <span className="font-mono font-semibold text-slate-900 tabular-nums">
+                        <span className="text-slate-700 font-medium">{s.source}</span>
+                        <span className="font-mono font-bold text-slate-900 tabular-nums">
                           {s.sessions} sessions
                         </span>
                       </div>
@@ -670,10 +721,9 @@ export function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Appareils & Navigateurs */}
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
                 <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Monitor className="w-4 h-4 text-emerald-700" />
+                  <Monitor className="w-4 h-4 text-amber-600" />
                   <span>Appareils & Navigateurs</span>
                 </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -698,8 +748,7 @@ export function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Pays & Villes */}
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs">
                 <h3 className="font-display text-base font-bold text-slate-900">
                   Pays et villes des visiteurs
                 </h3>
@@ -731,73 +780,73 @@ export function AdminDashboardPage() {
         {tab === 'overview' && (
           <motion.div
             key="tab-overview"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-6"
           >
-            <h1 className="font-display text-xl font-bold text-slate-900">
+            <h1 className="font-display text-2xl font-extrabold text-slate-900">
               Indicateurs plateforme KPATA
             </h1>
 
             {loadingData && !overview ? (
-              <div className="h-32 bg-white border border-slate-200 rounded-xl animate-pulse" />
+              <div className="h-32 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-sm text-slate-500">
+                Chargement des indicateurs...
+              </div>
             ) : (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  <div className="bg-white border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500">Utilisateurs inscrits</p>
-                    <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+                    <p className="text-xs text-slate-500 font-medium">Utilisateurs inscrits</p>
+                    <p className="font-mono text-2xl font-extrabold text-slate-900 mt-1 tabular-nums">
                       {overview?.usersCount ?? 0}
                     </p>
                   </div>
-                  <div className="bg-white border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500">Groupes actifs</p>
-                    <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
+                  <div className="bg-gradient-to-br from-teal-50/70 to-white border border-teal-200 rounded-2xl p-4 shadow-xs">
+                    <p className="text-xs text-teal-800 font-medium">Groupes actifs</p>
+                    <p className="font-mono text-2xl font-extrabold text-teal-900 mt-1 tabular-nums">
                       {overview?.groupsCount ?? 0}
                     </p>
                   </div>
-                  <div className="bg-white border border-emerald-200 rounded-xl p-4">
-                    <p className="text-xs text-emerald-700 font-medium">MRR abonnements</p>
-                    <p className="font-mono text-xl font-bold text-emerald-700 mt-1 tabular-nums">
+                  <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-300 rounded-2xl p-4 shadow-xs">
+                    <p className="text-xs text-emerald-800 font-semibold">MRR abonnements</p>
+                    <p className="font-mono text-xl font-extrabold text-emerald-800 mt-1 tabular-nums">
                       {formatMoney(overview?.estimatedMrrInt ?? 0, 'XOF')}
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setTab('subscriptions')}
-                    className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:border-amber-300 transition-colors"
+                    className="bg-gradient-to-br from-amber-50 to-white border border-amber-300 rounded-2xl p-4 text-left hover:border-amber-500 transition-colors shadow-xs"
                   >
-                    <p className="text-xs text-slate-500">Demandes en attente</p>
-                    <p className="font-mono text-2xl font-bold text-amber-700 mt-1 tabular-nums">
+                    <p className="text-xs text-amber-900 font-semibold">Demandes en attente</p>
+                    <p className="font-mono text-2xl font-extrabold text-amber-700 mt-1 tabular-nums">
                       {overview?.pendingRequests ?? 0}
                     </p>
                     {(overview?.pendingRequests ?? 0) > 0 && (
-                      <p className="text-[11px] font-medium text-amber-800 mt-0.5">
-                        Valider →
-                      </p>
+                      <p className="text-[11px] font-bold text-amber-800 mt-0.5">Valider →</p>
                     )}
                   </button>
-                  <div className="bg-white border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500">Volume dépenses suivi</p>
-                    <p className="font-mono text-xl font-bold text-slate-900 mt-1 tabular-nums">
+                  <div className="bg-gradient-to-br from-sky-50/70 to-white border border-sky-200 rounded-2xl p-4 shadow-xs">
+                    <p className="text-xs text-sky-900 font-medium">Volume dépenses suivi</p>
+                    <p className="font-mono text-xl font-extrabold text-sky-950 mt-1 tabular-nums">
                       {formatMoney(overview?.expensesVolumeInt ?? 0, 'XOF')}
                     </p>
                   </div>
-                  <div className="bg-white border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500">Transactions paiement</p>
-                    <p className="font-mono text-2xl font-bold text-slate-900 mt-1 tabular-nums">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+                    <p className="text-xs text-slate-500 font-medium">Transactions paiement</p>
+                    <p className="font-mono text-2xl font-extrabold text-slate-900 mt-1 tabular-nums">
                       {overview?.totalTransactionsCount ?? 0}
                     </p>
                   </div>
                 </div>
 
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                  <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                  <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
                     <h2 className="font-display text-base font-bold text-slate-900">
                       Métadonnées des groupes (données financières privées protégées)
                     </h2>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs font-semibold text-emerald-800">
                       FedaPay :{' '}
                       {overview?.fedapay?.configured
                         ? `Actif (${overview.fedapay.environment})`
@@ -817,14 +866,14 @@ export function AdminDashboardPage() {
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         {(overview?.groupsSummary || []).map((g: any) => (
-                          <tr key={g.id}>
-                            <td className="px-5 py-3 font-medium text-slate-900">{g.name}</td>
+                          <tr key={g.id} className="hover:bg-emerald-50/30 transition-colors">
+                            <td className="px-5 py-3 font-semibold text-slate-900">{g.name}</td>
                             <td className="px-5 py-3 text-slate-600">
                               {GROUP_TYPES.find((t) => t.value === g.type)?.label || g.type}
                             </td>
                             <td className="px-5 py-3 font-mono tabular-nums">{g.membersCount}</td>
                             <td className="px-5 py-3 font-mono">{g.currency}</td>
-                            <td className="px-5 py-3 font-mono text-xs text-emerald-800">
+                            <td className="px-5 py-3 font-mono text-xs font-semibold text-emerald-800">
                               {g.planCode} · {g.subscriptionStatus}
                             </td>
                           </tr>
@@ -842,67 +891,78 @@ export function AdminDashboardPage() {
         {tab === 'subscriptions' && (
           <motion.div
             key="tab-subscriptions"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-8"
           >
-            {/* Tarifs configurables */}
-            <section className="bg-white border border-stone-200 rounded-2xl p-6 space-y-4">
+            {/* Tarifs configurables (3 offres exactement) */}
+            <section className="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-xs">
               <div>
-                <h2 className="font-display text-lg font-bold text-stone-900">
+                <h2 className="font-display text-lg font-extrabold text-slate-900">
                   Tarification des 3 offres par groupe (FCFA / mois)
                 </h2>
-                <p className="text-xs text-stone-500 mt-1">
+                <p className="text-xs text-slate-600 mt-1">
                   Chaque niveau possède des quotas et droits distincts vérifiés côté serveur avant utilisation.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {plans.map((p) => (
-                  <div key={p.code} className="border border-stone-200 rounded-xl p-4 flex flex-col justify-between gap-3">
-                    <div className="space-y-1.5">
-                      <p className="font-semibold text-stone-900">
-                        {p.name} ({p.code})
-                      </p>
-                      <p className="text-xs text-stone-500 leading-relaxed">{p.description}</p>
-                      {p.entitlements && (
-                        <p className="text-[11px] font-mono text-emerald-800 pt-1">
-                          Max {p.entitlements.maxMembers == null ? '∞' : p.entitlements.maxMembers} membres ·{' '}
-                          {p.entitlements.maxBudgets == null ? '∞' : p.entitlements.maxBudgets} budgets
+                {plans.map((p) => {
+                  const accent =
+                    p.code === 'ORG'
+                      ? 'border-amber-300 bg-gradient-to-b from-amber-50/60 to-white'
+                      : p.code === 'PREMIUM'
+                      ? 'border-emerald-300 bg-gradient-to-b from-emerald-50/70 to-white'
+                      : 'border-slate-200 bg-white';
+                  return (
+                    <div
+                      key={p.code}
+                      className={`border rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-xs ${accent}`}
+                    >
+                      <div className="space-y-1.5">
+                        <p className="font-display font-bold text-slate-900">
+                          {p.name} <span className="font-mono text-xs text-slate-500">({p.code})</span>
                         </p>
-                      )}
+                        <p className="text-xs text-slate-600 leading-relaxed">{p.description}</p>
+                        {p.entitlements && (
+                          <p className="text-[11px] font-mono font-semibold text-emerald-800 pt-1">
+                            Max {p.entitlements.maxMembers == null ? '∞' : p.entitlements.maxMembers} membres ·{' '}
+                            {p.entitlements.maxBudgets == null ? '∞' : p.entitlements.maxBudgets} budgets
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 pt-3 border-t border-slate-200/70">
+                        <input
+                          type="number"
+                          min={0}
+                          step={50}
+                          value={planPrices[p.code] ?? p.monthlyPriceInt}
+                          onChange={(e) =>
+                            setPlanPrices((prev) => ({ ...prev, [p.code]: e.target.value }))
+                          }
+                          className="w-full px-3 py-1.5 text-sm font-mono border border-slate-300 rounded-xl bg-white"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleUpdatePlanPrice(p.code)}
+                          className="px-3.5 py-2 text-xs font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800 shrink-0 transition-colors"
+                        >
+                          Enregistrer
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 pt-2 border-t border-stone-100">
-                      <input
-                        type="number"
-                        min={0}
-                        step={50}
-                        value={planPrices[p.code] ?? p.monthlyPriceInt}
-                        onChange={(e) =>
-                          setPlanPrices((prev) => ({ ...prev, [p.code]: e.target.value }))
-                        }
-                        className="w-full px-3 py-1.5 text-sm font-mono border border-stone-300 rounded-xl"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleUpdatePlanPrice(p.code)}
-                        className="px-3.5 py-1.5 text-xs font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 shrink-0"
-                      >
-                        Enregistrer
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
             {/* Demandes manuelles pilote Bénin */}
-            <section className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+            <section className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
               <div>
-                <h2 className="font-display text-lg font-bold text-slate-900">
+                <h2 className="font-display text-lg font-extrabold text-slate-900">
                   Validation manuelle des abonnements (Pilote Mobile Money Bénin)
                 </h2>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-600 mt-1">
                   Aucune activation automatique n’est autorisée sur déclaration. Vérifiez la
                   référence reçue avant de valider.
                 </p>
@@ -917,13 +977,15 @@ export function AdminDashboardPage() {
                   {requests.map((r) => (
                     <div key={r.id} className="py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-slate-900">
+                        <p className="text-sm font-bold text-slate-900">
                           {r.groupName} · {r.planCode} ({r.months} mois) ·{' '}
-                          <span className="font-mono">{formatMoney(r.amountInt, r.currency)}</span>
+                          <span className="font-mono text-emerald-800">
+                            {formatMoney(r.amountInt, r.currency)}
+                          </span>
                         </p>
                         <p className="text-xs text-slate-600">
                           Demandé par {r.requestedByName} ({r.requestedByEmail}) · Réf :{' '}
-                          <span className="font-mono font-semibold">{r.reference}</span>
+                          <span className="font-mono font-semibold text-slate-900">{r.reference}</span>
                         </p>
                         {r.proofNote && (
                           <p className="text-xs text-slate-500">Note : {r.proofNote}</p>
@@ -942,12 +1004,12 @@ export function AdminDashboardPage() {
                             onChange={(e) =>
                               setCommentByReq((prev) => ({ ...prev, [r.id]: e.target.value }))
                             }
-                            className="px-3 py-1.5 text-xs border border-slate-300 rounded-lg w-56"
+                            className="px-3 py-1.5 text-xs border border-slate-300 rounded-xl w-56"
                           />
                           <button
                             type="button"
                             onClick={() => handleApproveRequest(r.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800"
+                            className="inline-flex items-center gap-1 px-3.5 py-2 text-xs font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>Approuver</span>
@@ -955,7 +1017,7 @@ export function AdminDashboardPage() {
                           <button
                             type="button"
                             onClick={() => handleRejectRequest(r.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-lg hover:bg-red-50"
+                            className="inline-flex items-center gap-1 px-3.5 py-2 text-xs font-semibold text-red-700 border border-red-200 rounded-xl hover:bg-red-50"
                           >
                             <XCircle className="w-3.5 h-3.5" />
                             <span>Rejeter</span>
@@ -974,22 +1036,22 @@ export function AdminDashboardPage() {
         {tab === 'users' && (
           <motion.div
             key="tab-users"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="grid grid-cols-1 lg:grid-cols-12 gap-6"
           >
-            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-200">
+            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+              <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/70">
                 <h2 className="font-display text-base font-bold text-slate-900">
                   Comptes utilisateurs ({usersList.length})
                 </h2>
               </div>
               <div className="divide-y divide-slate-100">
                 {usersList.map((u) => (
-                  <div key={u.id} className="px-5 py-3 flex items-center justify-between gap-4">
+                  <div key={u.id} className="px-5 py-3 flex items-center justify-between gap-4 hover:bg-slate-50/70">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-900 truncate">
+                      <p className="text-sm font-semibold text-slate-900 truncate">
                         {u.firstName} {u.lastName}
                       </p>
                       <p className="text-xs text-slate-500 truncate">{u.email}</p>
@@ -998,7 +1060,7 @@ export function AdminDashboardPage() {
                       aria-label={`Rôle de ${u.email}`}
                       value={u.role}
                       onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                      className="px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-white"
+                      className="px-2.5 py-1.5 text-xs font-semibold border border-slate-300 rounded-xl bg-white"
                     >
                       <option value="USER">USER</option>
                       <option value="ADMIN">ADMIN</option>
@@ -1012,10 +1074,10 @@ export function AdminDashboardPage() {
             <div className="lg:col-span-5 space-y-6">
               <form
                 onSubmit={handleCreateAnnouncement}
-                className="bg-white border border-slate-200 rounded-xl p-5 space-y-3"
+                className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs"
               >
                 <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Megaphone className="w-4 h-4 text-emerald-700" />
+                  <Megaphone className="w-4 h-4 text-amber-600" />
                   <span>Publier une annonce</span>
                 </h2>
                 <input
@@ -1024,7 +1086,7 @@ export function AdminDashboardPage() {
                   placeholder="Titre de l’annonce"
                   value={annTitle}
                   onChange={(e) => setAnnTitle(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl"
                 />
                 <textarea
                   required
@@ -1032,13 +1094,13 @@ export function AdminDashboardPage() {
                   placeholder="Message affiché aux utilisateurs..."
                   value={annBody}
                   onChange={(e) => setAnnBody(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl"
                 />
                 <div className="flex items-center justify-between gap-3">
                   <select
                     value={annLevel}
                     onChange={(e) => setAnnLevel(e.target.value as any)}
-                    className="px-3 py-2 text-xs border border-slate-300 rounded-lg"
+                    className="px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white"
                   >
                     <option value="INFO">Information</option>
                     <option value="SUCCESS">Succès</option>
@@ -1046,21 +1108,21 @@ export function AdminDashboardPage() {
                   </select>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-xs font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800"
+                    className="px-4 py-2 text-xs font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800 transition-colors"
                   >
                     Publier
                   </button>
                 </div>
               </form>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs">
                 <h3 className="text-sm font-bold text-slate-900">Annonces actives</h3>
                 {announcements.length === 0 ? (
                   <p className="text-xs text-slate-500">Aucune annonce publiée.</p>
                 ) : (
                   <div className="space-y-3">
                     {announcements.map((a) => (
-                      <div key={a.id} className="p-3 border border-slate-200 rounded-lg flex justify-between gap-2">
+                      <div key={a.id} className="p-3 border border-slate-200 rounded-xl flex justify-between gap-2">
                         <div>
                           <p className="text-sm font-semibold text-slate-900">{a.title}</p>
                           <p className="text-xs text-slate-600 mt-0.5">{a.body}</p>
@@ -1086,12 +1148,12 @@ export function AdminDashboardPage() {
         {tab === 'audit' && (
           <motion.div
             key="tab-audit"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
           >
-            <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs">
               <h2 className="font-display text-base font-bold text-slate-900">
                 Messages de contact reçus
               </h2>
@@ -1112,7 +1174,7 @@ export function AdminDashboardPage() {
               )}
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs">
               <h2 className="font-display text-base font-bold text-slate-900">
                 Journal d’audit système
               </h2>
@@ -1120,7 +1182,7 @@ export function AdminDashboardPage() {
                 {auditLogs.map((l) => (
                   <div key={l.id} className="py-2.5 text-xs space-y-0.5">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono font-semibold text-slate-900">{l.action}</span>
+                      <span className="font-mono font-semibold text-emerald-900">{l.action}</span>
                       <span className="text-slate-400 font-mono">
                         {new Date(l.createdAt).toLocaleString('fr-FR')}
                       </span>

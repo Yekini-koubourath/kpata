@@ -33,7 +33,7 @@ const ROUTE_SEO_MAP: Record<string, RouteSeoMeta> = {
   '/contact': {
     title: 'Contact et accompagnement — KPATA Bénin & Afrique de l’Ouest',
     description:
-      'Contactez l’équipe KPATA à Cotonou pour vos questions, partenariats associatifs ou retours utilisateurs.',
+      'Contactez l’équipe KPATA à Abomey-Calavi (yekinikoubou@gmail.com · 0150495832) pour vos questions, partenariats associatifs ou retours utilisateurs.',
   },
   '/conditions-generales': {
     title: 'Conditions générales d’utilisation — KPATA',

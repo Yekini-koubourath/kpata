@@ -202,21 +202,31 @@ export function GroupWorkspacePage({ groupId }: { groupId: string }) {
         )}
 
         {/* Segmented Tab Bar */}
-        <div className="flex items-center gap-1 p-1.5 bg-white border border-stone-200 rounded-2xl overflow-x-auto">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              type="button"
-              onClick={() => setTab(t.key)}
-              className={`px-3.5 py-2 text-xs font-medium rounded-xl transition-colors whitespace-nowrap shrink-0 ${
-                tab === t.key
-                  ? 'bg-emerald-800 text-white font-semibold'
-                  : 'text-stone-600 hover:bg-stone-100 hover:text-stone-950'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-1 p-1.5 bg-white border border-slate-200 rounded-2xl overflow-x-auto shadow-xs">
+          {tabs.map((t) => {
+            const active = tab === t.key;
+            return (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => setTab(t.key)}
+                className={`relative px-3.5 py-2 text-xs font-medium rounded-xl transition-colors whitespace-nowrap shrink-0 ${
+                  active
+                    ? 'text-white font-semibold'
+                    : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-900'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="group-tab-pill"
+                    transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-700 to-teal-700 shadow-xs"
+                  />
+                )}
+                <span className="relative z-10">{t.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {tab === 'overview' && (

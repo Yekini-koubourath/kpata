@@ -101,9 +101,36 @@ export function ensureSeedData(): void {
     }
   }
 
-  // 3. Check if demo users already seeded
-  const existingUsers = db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number };
-  if (existingUsers.c > 0) return;
+  // 3. Ensure default Super Admin exists (admin@kpata.bj / KpataAdmin2026!) if no admin user exists yet
+  const existingAdmin = db
+    .prepare("SELECT id FROM users WHERE role IN ('ADMIN', 'SUPER_ADMIN') LIMIT 1")
+    .get() as { id: string } | undefined;
+  if (!existingAdmin) {
+    const adminPassHash = hashPassword('KpataAdmin2026!');
+    const existingAdminEmail = db
+      .prepare("SELECT id FROM users WHERE email = 'admin@kpata.bj'")
+      .get() as { id: string } | undefined;
+    if (existingAdminEmail) {
+      db.prepare("UPDATE users SET role = 'SUPER_ADMIN', password_hash = ?, updated_at = ? WHERE id = ?").run(
+        adminPassHash,
+        nowIso,
+        existingAdminEmail.id
+      );
+    } else {
+      const adminId = 'usr_admin_kpata';
+      db.prepare(
+        `INSERT INTO users (id, email, first_name, last_name, phone, password_hash, role, email_verified, preferred_lang, created_at, updated_at)
+         VALUES (?, 'admin@kpata.bj', 'Admin', 'KPATA', '+229 0150495832', ?, 'SUPER_ADMIN', 1, 'fr', ?, ?)`
+      ).run(adminId, adminPassHash, nowIso, nowIso);
+      db.prepare('INSERT OR IGNORE INTO notification_preferences (user_id) VALUES (?)').run(adminId);
+    }
+  }
+
+  // 4. Check if demo users already seeded
+  const existingDemoUser = db
+    .prepare("SELECT id FROM users WHERE email = 'jean.dossou@kpata.bj'")
+    .get() as { id: string } | undefined;
+  if (existingDemoUser) return;
 
   const demoPasswordHash = hashPassword('KpataDemo2026!');
 

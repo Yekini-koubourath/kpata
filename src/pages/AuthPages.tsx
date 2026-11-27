@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { Lock, ShieldCheck } from 'lucide-react';
 import { PublicLayout } from '../components/PublicLayout';
 import { Link, useRouter } from '../lib/router';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../lib/api';
+import { PasswordInput } from '../components/PasswordInput';
 import { PLAN_ENTITLEMENTS, type SubscriptionPlanCode } from '../shared/types';
 
 function useSelectedPlanRedirect() {
@@ -45,14 +47,14 @@ export function LoginPage() {
     }
   };
 
-  const quickDemoLogin = async (demoEmail: string) => {
+  const quickLogin = async (demoEmail: string, demoPassword: string, dest = postAuthTarget) => {
     setError('');
     setLoading(true);
     try {
-      await login(demoEmail, 'KpataDemo2026!');
-      navigate(postAuthTarget);
+      await login(demoEmail, demoPassword);
+      navigate(dest);
     } catch (err: any) {
-      setError(err?.message || 'Connexion démo impossible.');
+      setError(err?.message || 'Connexion impossible.');
     } finally {
       setLoading(false);
     }
@@ -61,16 +63,21 @@ export function LoginPage() {
   return (
     <PublicLayout>
       <section className="max-w-md mx-auto px-4 py-14 space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="font-display text-2xl font-bold text-stone-900">Connexion à KPATA</h1>
-          <p className="text-sm text-stone-600">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28 }}
+          className="space-y-2 text-center"
+        >
+          <h1 className="font-display text-2xl font-extrabold text-slate-900">Connexion à KPATA</h1>
+          <p className="text-sm text-slate-600">
             Accédez à vos groupes, dépenses partagées et remboursements.
           </p>
-        </div>
+        </motion.div>
 
         {paidPlan && (
-          <div className="p-3.5 rounded-xl bg-[#0B1F19] text-white text-xs flex items-start gap-2.5">
-            <Lock className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#042F24] to-[#064E3B] text-white text-xs flex items-start gap-2.5 shadow-sm">
+            <Lock className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
             <span>
               Offre choisie : <strong>{PLAN_ENTITLEMENTS[paidPlan].label}</strong>. Connectez-vous
               pour finaliser le paiement avant d’activer votre groupe.
@@ -78,9 +85,12 @@ export function LoginPage() {
           </div>
         )}
 
-        <form
+        <motion.form
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
           onSubmit={handleSubmit}
-          className="border border-stone-200 rounded-2xl bg-white p-6 sm:p-7 space-y-4"
+          className="border border-emerald-950/10 rounded-2xl bg-white p-6 sm:p-7 space-y-4 shadow-sm"
         >
           {error && (
             <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800">
@@ -88,49 +98,48 @@ export function LoginPage() {
             </div>
           )}
           <label className="block space-y-1.5 text-sm">
-            <span className="font-medium text-stone-700">Adresse e-mail</span>
+            <span className="font-medium text-slate-700">Adresse e-mail</span>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jean.dossou@kpata.bj"
-              className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+              className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
             />
           </label>
           <label className="block space-y-1.5 text-sm">
-            <span className="font-medium text-stone-700">Mot de passe</span>
-            <input
-              type="password"
+            <span className="font-medium text-slate-700">Mot de passe</span>
+            <PasswordInput
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+              className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
             />
           </label>
           <div className="flex items-center justify-between text-xs">
-            <Link to="/mot-de-passe-oublie" className="text-emerald-800 hover:underline">
+            <Link to="/mot-de-passe-oublie" className="text-emerald-700 font-medium hover:underline">
               Mot de passe oublié ?
             </Link>
-            <Link to={`/inscription${planSuffix}`} className="text-stone-600 hover:underline">
+            <Link to={`/inscription${planSuffix}`} className="text-slate-600 hover:underline">
               Créer un compte
             </Link>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 disabled:opacity-50 transition-colors"
+            className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl hover:from-emerald-800 hover:to-teal-800 disabled:opacity-50 transition-all"
           >
             {loading ? 'Connexion...' : paidPlan ? 'Se connecter et passer au paiement' : 'Se connecter'}
           </button>
-        </form>
+        </motion.form>
 
-        {/* Explicit clearly-labeled demo accounts */}
-        <div className="border border-stone-200 rounded-2xl bg-white p-5 space-y-3">
-          <p className="text-xs font-semibold text-stone-800">
+        {/* Explicit clearly-labeled demo & admin accounts */}
+        <div className="border border-emerald-200 rounded-2xl bg-gradient-to-br from-emerald-50/80 to-white p-5 space-y-3">
+          <p className="text-xs font-bold text-emerald-950">
             Comptes de démonstration (environnement pilote Bénin)
           </p>
-          <p className="text-xs text-stone-600">
+          <p className="text-xs text-slate-600">
             Testez immédiatement la Famille Dossou, la Colocation Calavi et l’Association Jeunes
             Leaders :
           </p>
@@ -138,33 +147,46 @@ export function LoginPage() {
             <button
               type="button"
               disabled={loading}
-              onClick={() => quickDemoLogin('jean.dossou@kpata.bj')}
-              className="px-3.5 py-2.5 text-xs font-medium bg-[#FAF9F6] border border-stone-200 rounded-xl hover:border-stone-300 text-left transition-colors"
+              onClick={() => quickLogin('jean.dossou@kpata.bj', 'KpataDemo2026!')}
+              className="px-3.5 py-2.5 text-xs font-medium bg-white border border-emerald-200 rounded-xl hover:border-emerald-400 text-left transition-colors"
             >
-              <span className="block font-semibold text-stone-900">Jean Dossou</span>
-              <span className="text-stone-500">Propriétaire Famille · Trésorier Assoc.</span>
+              <span className="block font-bold text-slate-900">Jean Dossou</span>
+              <span className="text-slate-500">Propriétaire Famille · Trésorier</span>
             </button>
             <button
               type="button"
               disabled={loading}
-              onClick={() => quickDemoLogin('mariam.kone@kpata.bj')}
-              className="px-3.5 py-2.5 text-xs font-medium bg-[#FAF9F6] border border-stone-200 rounded-xl hover:border-stone-300 text-left transition-colors"
+              onClick={() => quickLogin('mariam.kone@kpata.bj', 'KpataDemo2026!')}
+              className="px-3.5 py-2.5 text-xs font-medium bg-white border border-emerald-200 rounded-xl hover:border-emerald-400 text-left transition-colors"
             >
-              <span className="block font-semibold text-stone-900">Mariam Koné</span>
-              <span className="text-stone-500">Admin Famille · Présidente Assoc.</span>
+              <span className="block font-bold text-slate-900">Mariam Koné</span>
+              <span className="text-slate-500">Admin Famille · Présidente</span>
             </button>
           </div>
         </div>
 
-        {/* Site Owner / Central Admin entry */}
-        <div className="text-center pt-1">
-          <Link
-            to="/admin"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-600 hover:text-emerald-800 transition-colors"
+        {/* Site Owner / Central Admin entry with exact seeded credentials */}
+        <div className="border border-amber-300/80 rounded-2xl bg-gradient-to-br from-amber-50/90 to-white p-4 space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-950">
+              <ShieldCheck className="w-4 h-4 text-amber-700" />
+              <span>Accès Administrateur Principal (/admin)</span>
+            </span>
+            <Link to="/admin" className="text-xs font-semibold text-emerald-800 hover:underline">
+              Ouvrir /admin →
+            </Link>
+          </div>
+          <p className="text-xs text-slate-700 font-mono">
+            admin@kpata.bj · Mot de passe : <strong>KpataAdmin2026!</strong>
+          </p>
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => quickLogin('admin@kpata.bj', 'KpataAdmin2026!', '/admin')}
+            className="w-full py-2 px-3 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl transition-colors"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-800" />
-            <span>Propriétaire du site ? Accéder à l’administration centrale →</span>
-          </Link>
+            Connexion directe au tableau de bord Administrateur
+          </button>
         </div>
       </section>
     </PublicLayout>
@@ -215,16 +237,21 @@ export function RegisterPage() {
   return (
     <PublicLayout>
       <section className="max-w-md mx-auto px-4 py-14 space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="font-display text-2xl font-bold text-stone-900">Créer un compte KPATA</h1>
-          <p className="text-sm text-stone-600">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28 }}
+          className="space-y-2 text-center"
+        >
+          <h1 className="font-display text-2xl font-extrabold text-slate-900">Créer un compte KPATA</h1>
+          <p className="text-sm text-slate-600">
             Gratuit pour créer ou rejoindre vos groupes familiaux, colocations et associations.
           </p>
-        </div>
+        </motion.div>
 
         {paidPlan && (
-          <div className="p-3.5 rounded-xl bg-[#0B1F19] text-white text-xs flex items-start gap-2.5">
-            <Lock className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#042F24] to-[#064E3B] text-white text-xs flex items-start gap-2.5">
+            <Lock className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
             <span>
               Offre choisie : <strong>{PLAN_ENTITLEMENTS[paidPlan].label}</strong>. Après
               inscription, vous passerez directement au règlement sécurisé pour activer votre
@@ -244,23 +271,26 @@ export function RegisterPage() {
               <button
                 type="button"
                 onClick={handleVerifyNow}
-                className="px-4 py-2 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900"
+                className="px-4 py-2 text-sm font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800"
               >
                 {paidPlan ? 'Vérifier et passer au paiement' : 'Vérifier mon e-mail et continuer'}
               </button>
               <button
                 type="button"
                 onClick={() => navigate(postAuthTarget)}
-                className="px-4 py-2 text-sm font-medium text-stone-700 bg-white border border-stone-300 rounded-xl"
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl"
               >
                 Plus tard
               </button>
             </div>
           </div>
         ) : (
-          <form
+          <motion.form
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
             onSubmit={handleSubmit}
-            className="border border-stone-200 rounded-2xl bg-white p-6 sm:p-7 space-y-4"
+            className="border border-emerald-950/10 rounded-2xl bg-white p-6 sm:p-7 space-y-4 shadow-sm"
           >
             {error && (
               <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800">
@@ -269,61 +299,60 @@ export function RegisterPage() {
             )}
             <div className="grid grid-cols-2 gap-3">
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Prénom</span>
+                <span className="font-medium text-slate-700">Prénom</span>
                 <input
                   type="text"
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
               </label>
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Nom</span>
+                <span className="font-medium text-slate-700">Nom</span>
                 <input
                   type="text"
                   required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
               </label>
             </div>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Adresse e-mail</span>
+              <span className="font-medium text-slate-700">Adresse e-mail</span>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Téléphone (facultatif)</span>
+              <span className="font-medium text-slate-700">Téléphone (facultatif)</span>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+229 01 ..."
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Mot de passe (8 caractères min.)</span>
-              <input
-                type="password"
+              <span className="font-medium text-slate-700">Mot de passe (8 caractères min.)</span>
+              <PasswordInput
                 required
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 disabled:opacity-50 transition-colors"
+              className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl hover:from-emerald-800 hover:to-teal-800 disabled:opacity-50 transition-all"
             >
               {loading
                 ? 'Création du compte...'
@@ -331,13 +360,13 @@ export function RegisterPage() {
                 ? 'Créer mon compte et continuer vers le paiement'
                 : 'Créer mon compte'}
             </button>
-            <p className="text-center text-xs text-stone-600">
+            <p className="text-center text-xs text-slate-600">
               Déjà inscrit ?{' '}
-              <Link to={`/connexion${planSuffix}`} className="text-emerald-800 font-semibold hover:underline">
+              <Link to={`/connexion${planSuffix}`} className="text-emerald-700 font-semibold hover:underline">
                 Se connecter
               </Link>
             </p>
-          </form>
+          </motion.form>
         )}
       </section>
     </PublicLayout>
@@ -380,7 +409,7 @@ export function ForgotPasswordPage() {
   return (
     <PublicLayout>
       <section className="max-w-md mx-auto px-4 py-14 space-y-6">
-        <h1 className="font-display text-2xl font-bold text-stone-900 text-center">
+        <h1 className="font-display text-2xl font-bold text-slate-900 text-center">
           Récupération du mot de passe
         </h1>
 
@@ -389,58 +418,57 @@ export function ForgotPasswordPage() {
             <p className="text-sm text-emerald-900">Votre mot de passe a été réinitialisé.</p>
             <Link
               to="/connexion"
-              className="inline-block px-5 py-2.5 text-sm font-semibold text-white bg-emerald-800 rounded-xl"
+              className="inline-block px-5 py-2.5 text-sm font-semibold text-white bg-emerald-700 rounded-xl"
             >
               Se connecter
             </Link>
           </div>
         ) : !result ? (
-          <form onSubmit={handleRequest} className="border border-stone-200 rounded-2xl bg-white p-6 space-y-4">
+          <form onSubmit={handleRequest} className="border border-slate-200 rounded-2xl bg-white p-6 space-y-4 shadow-xs">
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Votre adresse e-mail</span>
+              <span className="font-medium text-slate-700">Votre adresse e-mail</span>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl"
               />
             </label>
             <button
               type="submit"
-              className="w-full py-2.5 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 transition-colors"
+              className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl"
             >
               Demander un lien de réinitialisation
             </button>
           </form>
         ) : (
-          <form onSubmit={handleReset} className="border border-stone-200 rounded-2xl bg-white p-6 space-y-4">
-            <p className="text-sm text-stone-600">{result.message}</p>
+          <form onSubmit={handleReset} className="border border-slate-200 rounded-2xl bg-white p-6 space-y-4 shadow-xs">
+            <p className="text-sm text-slate-600">{result.message}</p>
             {error && <p className="text-sm text-red-700">{error}</p>}
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Jeton de réinitialisation</span>
+              <span className="font-medium text-slate-700">Jeton de réinitialisation</span>
               <input
                 type="text"
                 required
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl font-mono text-xs"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl font-mono text-xs"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Nouveau mot de passe</span>
-              <input
-                type="password"
+              <span className="font-medium text-slate-700">Nouveau mot de passe</span>
+              <PasswordInput
                 required
                 minLength={8}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
             <button
               type="submit"
-              className="w-full py-2.5 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900"
+              className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl"
             >
               Enregistrer le nouveau mot de passe
             </button>

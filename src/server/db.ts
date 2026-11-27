@@ -424,7 +424,7 @@ export function initSchema(db: Database.Database): void {
       referrer_host TEXT,
       landing_path TEXT NOT NULL,
       country TEXT NOT NULL DEFAULT 'Bénin',
-      city TEXT NOT NULL DEFAULT 'Cotonou',
+      city TEXT NOT NULL DEFAULT 'Abomey-Calavi',
       device_type TEXT NOT NULL DEFAULT 'Desktop',
       browser TEXT NOT NULL DEFAULT 'Chrome',
       duration_sec INTEGER NOT NULL DEFAULT 0,

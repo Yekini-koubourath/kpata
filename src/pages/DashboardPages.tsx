@@ -1,9 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, Check, CreditCard, Lock, Plus, RefreshCw, Trash2, Users } from 'lucide-react';
+import { motion } from 'motion/react';
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  Bell,
+  Check,
+  CreditCard,
+  Lock,
+  Plus,
+  RefreshCw,
+  ShieldCheck,
+  Trash2,
+  TrendingUp,
+  Users,
+  Wallet,
+} from 'lucide-react';
 import { AppShell } from '../components/AppShell';
 import { apiFetch } from '../lib/api';
 import { Link, useRouter } from '../lib/router';
 import { useAuth } from '../context/AuthContext';
+import { PasswordInput } from '../components/PasswordInput';
 import {
   COUNTRIES,
   CURRENCIES,
@@ -42,7 +58,7 @@ export function PersonalDashboardPage() {
       actions={
         <Link
           to="/app/groups"
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 transition-colors whitespace-nowrap"
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl hover:from-emerald-800 hover:to-teal-800 transition-all shadow-xs whitespace-nowrap"
         >
           <Plus className="w-4 h-4" />
           <span>Nouveau groupe</span>
@@ -50,20 +66,20 @@ export function PersonalDashboardPage() {
       }
     >
       {loading && !data ? (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-24 rounded-2xl bg-white border border-stone-200 animate-pulse" />
-            ))}
-          </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-28 rounded-2xl bg-white border border-slate-200 p-5 text-xs text-slate-400">
+              Chargement...
+            </div>
+          ))}
         </div>
       ) : (
         <div className="space-y-8">
           {/* Group Filter */}
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm text-stone-600">
+            <p className="text-sm text-slate-600">
               Vous participez à{' '}
-              <span className="font-mono font-semibold text-stone-900">
+              <span className="font-mono font-bold text-emerald-800">
                 {data?.groupsCount || 0}
               </span>{' '}
               groupe(s) actif(s).
@@ -72,7 +88,7 @@ export function PersonalDashboardPage() {
               aria-label="Filtrer par groupe"
               value={groupFilter}
               onChange={(e) => setGroupFilter(e.target.value)}
-              className="px-3.5 py-2 text-sm bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-700"
+              className="px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-xs"
             >
               <option value="">Tous mes groupes</option>
               {(data?.groupSummaries || []).map((g: any) => (
@@ -85,96 +101,141 @@ export function PersonalDashboardPage() {
 
           {/* Primary KPI Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 space-y-1">
-              <p className="text-xs font-medium text-stone-500">Total des avances</p>
-              <p className="font-mono text-xl font-bold text-stone-900 tabular-nums">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.24, delay: 0 }}
+              className="bg-gradient-to-br from-[#042F24] to-[#065F46] text-white rounded-2xl p-5 space-y-2 shadow-sm"
+            >
+              <div className="flex items-center justify-between text-xs text-emerald-200 font-medium">
+                <span>Total des avances</span>
+                <Wallet className="w-4 h-4 text-amber-300" />
+              </div>
+              <p className="font-mono text-2xl font-extrabold tabular-nums">
                 {formatMoney(data?.totalAdvancesInt || 0)}
               </p>
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-emerald-100/80">
                 Dépenses personnelles :{' '}
-                <span className="font-mono">{formatMoney(data?.totalPersonalExpensesInt || 0)}</span>
+                <span className="font-mono font-semibold text-white">
+                  {formatMoney(data?.totalPersonalExpensesInt || 0)}
+                </span>
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 space-y-1">
-              <p className="text-xs font-medium text-stone-500">Montants à recevoir</p>
-              <p className="font-mono text-xl font-bold text-emerald-800 tabular-nums">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.24, delay: 0.05 }}
+              className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 rounded-2xl p-5 space-y-2 shadow-xs"
+            >
+              <div className="flex items-center justify-between text-xs text-emerald-800 font-semibold">
+                <span>Montants à recevoir</span>
+                <ArrowDownLeft className="w-4 h-4 text-emerald-700" />
+              </div>
+              <p className="font-mono text-2xl font-extrabold text-emerald-700 tabular-nums">
                 {formatMoney(data?.totalToReceiveInt || 0)}
               </p>
-              <p className="text-xs text-stone-500">Créances nettes sur vos groupes</p>
-            </div>
+              <p className="text-xs text-slate-600">Créances nettes sur vos groupes</p>
+            </motion.div>
 
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 space-y-1">
-              <p className="text-xs font-medium text-stone-500">Dettes à payer</p>
-              <p className="font-mono text-xl font-bold text-red-700 tabular-nums">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.24, delay: 0.1 }}
+              className="bg-gradient-to-br from-rose-50/70 to-white border border-rose-200 rounded-2xl p-5 space-y-2 shadow-xs"
+            >
+              <div className="flex items-center justify-between text-xs text-rose-800 font-semibold">
+                <span>Dettes à payer</span>
+                <ArrowUpRight className="w-4 h-4 text-rose-600" />
+              </div>
+              <p className="font-mono text-2xl font-extrabold text-rose-700 tabular-nums">
                 {formatMoney(data?.totalToPayInt || 0)}
               </p>
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-slate-600">
                 Remboursements en attente :{' '}
-                <span className="font-mono">{data?.pendingSettlementsCount || 0}</span>
+                <span className="font-mono font-semibold text-rose-800">
+                  {data?.pendingSettlementsCount || 0}
+                </span>
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 space-y-1">
-              <p className="text-xs font-medium text-stone-500">Cotisations confirmées</p>
-              <p className="font-mono text-xl font-bold text-stone-900 tabular-nums">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.24, delay: 0.15 }}
+              className="bg-gradient-to-br from-amber-50/80 to-white border border-amber-200 rounded-2xl p-5 space-y-2 shadow-xs"
+            >
+              <div className="flex items-center justify-between text-xs text-amber-900 font-semibold">
+                <span>Cotisations confirmées</span>
+                <TrendingUp className="w-4 h-4 text-amber-600" />
+              </div>
+              <p className="font-mono text-2xl font-extrabold text-amber-800 tabular-nums">
                 {formatMoney(data?.confirmedContributionsInt || 0)}
               </p>
-              <p className="text-xs text-stone-500">
-                Sur <span className="font-mono">{formatMoney(data?.expectedContributionsInt || 0)}</span> attendus
+              <p className="text-xs text-slate-600">
+                Sur <span className="font-mono font-semibold">{formatMoney(data?.expectedContributionsInt || 0)}</span> attendus
               </p>
-            </div>
+            </motion.div>
           </div>
 
           {/* Groups Summary */}
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-stone-900">Mes groupes</h2>
-              <Link to="/app/groups" className="text-xs font-semibold text-emerald-800 hover:underline">
+              <h2 className="font-display text-lg font-extrabold text-slate-900">Mes groupes</h2>
+              <Link to="/app/groups" className="text-xs font-bold text-emerald-700 hover:underline">
                 Gérer tous les groupes →
               </Link>
             </div>
             {(data?.groupSummaries || []).length === 0 ? (
-              <div className="bg-white border border-stone-200 rounded-2xl p-8 text-center space-y-3">
-                <p className="text-sm text-stone-600">Vous n’appartenez encore à aucun groupe.</p>
+              <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-3 shadow-xs">
+                <p className="text-sm text-slate-600">Vous n’appartenez encore à aucun groupe.</p>
                 <Link
                   to="/app/groups"
-                  className="inline-block px-4 py-2 text-xs font-semibold text-white bg-emerald-800 rounded-xl"
+                  className="inline-block px-4 py-2 text-xs font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800"
                 >
                   Créer ou rejoindre un groupe
                 </Link>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {data.groupSummaries.map((g: any) => (
-                  <Link
+                {data.groupSummaries.map((g: any, idx: number) => (
+                  <motion.div
                     key={g.groupId}
-                    to={`/app/groups/${g.groupId}`}
-                    className="bg-white border border-stone-200 rounded-2xl p-5 hover:border-emerald-800 transition-colors flex flex-col justify-between space-y-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.22, delay: idx * 0.04 }}
+                    whileHover={{ y: -3 }}
                   >
-                    <div className="space-y-1">
-                      <p className="text-xs text-stone-500">
-                        {GROUP_TYPES.find((t) => t.value === g.groupType)?.label || g.groupType} ·{' '}
-                        {GROUP_ROLE_LABELS[g.role as GroupRole] || g.role} · {g.membersCount} membres
-                      </p>
-                      <h3 className="font-display font-bold text-stone-900 truncate">{g.groupName}</h3>
-                    </div>
-                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                      <span className="text-stone-500">Votre solde net</span>
-                      <span
-                        className={`font-mono font-bold tabular-nums ${
-                          g.myNetBalanceInt > 0
-                            ? 'text-emerald-800'
-                            : g.myNetBalanceInt < 0
-                            ? 'text-red-700'
-                            : 'text-stone-700'
-                        }`}
-                      >
-                        {g.myNetBalanceInt > 0 ? '+' : ''}
-                        {formatMoney(g.myNetBalanceInt, g.currency)}
-                      </span>
-                    </div>
-                  </Link>
+                    <Link
+                      to={`/app/groups/${g.groupId}`}
+                      className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between space-y-4 h-full"
+                    >
+                      <div className="space-y-1.5">
+                        <p className="text-xs font-medium text-emerald-700">
+                          {GROUP_TYPES.find((t) => t.value === g.groupType)?.label || g.groupType} ·{' '}
+                          {GROUP_ROLE_LABELS[g.role as GroupRole] || g.role} · {g.membersCount} membres
+                        </p>
+                        <h3 className="font-display text-base font-extrabold text-slate-900 truncate">
+                          {g.groupName}
+                        </h3>
+                      </div>
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span className="text-slate-500">Votre solde net</span>
+                        <span
+                          className={`font-mono font-extrabold tabular-nums ${
+                            g.myNetBalanceInt > 0
+                              ? 'text-emerald-700'
+                              : g.myNetBalanceInt < 0
+                              ? 'text-rose-700'
+                              : 'text-slate-700'
+                          }`}
+                        >
+                          {g.myNetBalanceInt > 0 ? '+' : ''}
+                          {formatMoney(g.myNetBalanceInt, g.currency)}
+                        </span>
+                      </div>
+                    </Link>
+                  </motion.div>
                 ))}
               </div>
             )}
@@ -182,25 +243,28 @@ export function PersonalDashboardPage() {
 
           {/* Recent Expenses & Notifications */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <section className="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
-              <h2 className="font-display text-base font-bold text-stone-900">Dernières dépenses</h2>
+            <section className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
+              <h2 className="font-display text-base font-extrabold text-slate-900">
+                Dernières dépenses
+              </h2>
               {(data?.recentExpenses || []).length === 0 ? (
-                <p className="text-sm text-stone-500">Aucune dépense récente.</p>
+                <p className="text-sm text-slate-500">Aucune dépense récente.</p>
               ) : (
-                <div className="divide-y divide-stone-100">
+                <div className="divide-y divide-slate-100">
                   {data.recentExpenses.map((e: any) => (
                     <Link
                       key={e.id}
                       to={`/app/groups/${e.groupId}`}
-                      className="py-2.5 flex items-center justify-between gap-3 hover:bg-stone-50 rounded-lg px-1.5 transition-colors"
+                      className="py-2.5 flex items-center justify-between gap-3 hover:bg-emerald-50/40 rounded-xl px-2 transition-colors"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-stone-900 truncate">{e.title}</p>
-                        <p className="text-xs text-stone-500 truncate">
-                          {e.groupName} · {e.expenseDate} · {e.status === 'CANCELLED' ? 'Annulée' : e.paymentStatus}
+                        <p className="text-sm font-semibold text-slate-900 truncate">{e.title}</p>
+                        <p className="text-xs text-slate-500 truncate">
+                          {e.groupName} · {e.expenseDate} ·{' '}
+                          {e.status === 'CANCELLED' ? 'Annulée' : e.paymentStatus}
                         </p>
                       </div>
-                      <span className="font-mono text-sm font-semibold text-stone-900 tabular-nums shrink-0">
+                      <span className="font-mono text-sm font-bold text-slate-900 tabular-nums shrink-0">
                         {formatMoney(e.amountInt, e.currency)}
                       </span>
                     </Link>
@@ -209,24 +273,24 @@ export function PersonalDashboardPage() {
               )}
             </section>
 
-            <section className="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+            <section className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
-                <h2 className="font-display text-base font-bold text-stone-900">
+                <h2 className="font-display text-base font-extrabold text-slate-900">
                   Échéances récurrentes & Notifications
                 </h2>
-                <Link to="/app/notifications" className="text-xs font-semibold text-emerald-800 hover:underline">
+                <Link to="/app/notifications" className="text-xs font-bold text-emerald-700 hover:underline">
                   Tout voir
                 </Link>
               </div>
               {(data?.upcomingRecurring || []).length > 0 && (
-                <div className="space-y-2 pb-3 border-b border-stone-100">
-                  <p className="text-xs font-semibold text-stone-500">Dépenses programmées</p>
+                <div className="space-y-2 pb-3 border-b border-slate-100">
+                  <p className="text-xs font-bold text-amber-800">Dépenses programmées</p>
                   {data.upcomingRecurring.slice(0, 3).map((r: any) => (
                     <div key={r.id} className="flex items-center justify-between text-xs">
-                      <span className="text-stone-800 font-medium truncate">
+                      <span className="text-slate-800 font-medium truncate">
                         {r.title} ({r.recurrenceFreq})
                       </span>
-                      <span className="font-mono text-stone-700 tabular-nums">
+                      <span className="font-mono font-semibold text-slate-800 tabular-nums">
                         {formatMoney(r.amountInt, r.currency)}
                       </span>
                     </div>
@@ -234,15 +298,15 @@ export function PersonalDashboardPage() {
                 </div>
               )}
               {(data?.notifications || []).length === 0 ? (
-                <p className="text-sm text-stone-500">Aucune notification récente.</p>
+                <p className="text-sm text-slate-500">Aucune notification récente.</p>
               ) : (
-                <div className="divide-y divide-stone-100">
+                <div className="divide-y divide-slate-100">
                   {data.notifications.slice(0, 5).map((n: any) => (
                     <div key={n.id} className="py-2.5 text-sm">
-                      <p className={`font-medium ${n.isRead ? 'text-stone-600' : 'text-stone-900'}`}>
+                      <p className={`font-medium ${n.isRead ? 'text-slate-600' : 'text-slate-900 font-semibold'}`}>
                         {n.title}
                       </p>
-                      <p className="text-xs text-stone-500">{n.body}</p>
+                      <p className="text-xs text-slate-500">{n.body}</p>
                     </div>
                   ))}
                 </div>
@@ -354,7 +418,7 @@ export function GroupsListPage() {
         <button
           type="button"
           onClick={() => setShowCreate((v) => !v)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 transition-colors whitespace-nowrap"
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl hover:from-emerald-800 hover:to-teal-800 transition-all shadow-xs whitespace-nowrap"
         >
           <Plus className="w-4 h-4" />
           <span>{showCreate ? 'Fermer' : 'Créer un groupe'}</span>
@@ -364,7 +428,7 @@ export function GroupsListPage() {
       <div className="space-y-6">
         {msg && (
           <div
-            className={`p-3 rounded-xl text-sm border ${
+            className={`p-3.5 rounded-xl text-sm border ${
               msg.type === 'ok'
                 ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                 : 'bg-red-50 border-red-200 text-red-800'
@@ -375,29 +439,34 @@ export function GroupsListPage() {
         )}
 
         {showCreate && (
-          <form
+          <motion.form
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
             onSubmit={handleCreate}
-            className="bg-white border border-stone-200 rounded-2xl p-6 space-y-4"
+            className="bg-white border border-emerald-200 rounded-2xl p-6 space-y-4 shadow-sm"
           >
-            <h2 className="font-display text-lg font-bold text-stone-900">Créer un nouveau groupe</h2>
+            <h2 className="font-display text-lg font-extrabold text-slate-900">
+              Créer un nouveau groupe
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Nom du groupe</span>
+                <span className="font-medium text-slate-700">Nom du groupe</span>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ex: Famille Houénou, Coloc Fidjrossè..."
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
               </label>
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Type de groupe</span>
+                <span className="font-medium text-slate-700">Type de groupe</span>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl bg-white"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white"
                 >
                   {GROUP_TYPES.map((t) => (
                     <option key={t.value} value={t.value}>
@@ -407,11 +476,11 @@ export function GroupsListPage() {
                 </select>
               </label>
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Pays</span>
+                <span className="font-medium text-slate-700">Pays</span>
                 <select
                   value={country}
                   onChange={(e) => handleCountryChange(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl bg-white"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white"
                 >
                   {COUNTRIES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -421,11 +490,11 @@ export function GroupsListPage() {
                 </select>
               </label>
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Devise principale</span>
+                <span className="font-medium text-slate-700">Devise principale</span>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl bg-white"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white"
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -435,11 +504,11 @@ export function GroupsListPage() {
                 </select>
               </label>
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Confidentialité</span>
+                <span className="font-medium text-slate-700">Confidentialité</span>
                 <select
                   value={visibility}
                   onChange={(e) => setVisibility(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl bg-white"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white"
                 >
                   <option value="PRIVATE">Privé (sur invitation)</option>
                   <option value="LINK">Accessible par lien d’invitation</option>
@@ -447,28 +516,28 @@ export function GroupsListPage() {
                 </select>
               </label>
               <label className="block space-y-1.5 text-sm">
-                <span className="font-medium text-stone-700">Fuseau horaire</span>
+                <span className="font-medium text-slate-700">Fuseau horaire</span>
                 <input
                   type="text"
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-stone-300 rounded-xl font-mono text-xs"
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl font-mono text-xs"
                 />
               </label>
             </div>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Description (facultatif)</span>
+              <span className="font-medium text-slate-700">Description (facultatif)</span>
               <textarea
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl"
               />
             </label>
 
-            <div className="space-y-2 pt-2 border-t border-stone-100">
-              <span className="block text-sm font-medium text-stone-700">
-                Offre d’abonnement du groupe
+            <div className="space-y-2 pt-3 border-t border-slate-100">
+              <span className="block text-sm font-semibold text-slate-800">
+                Offre d’abonnement du groupe (3 formules)
               </span>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {(['FREE', 'PREMIUM', 'ORG'] as SubscriptionPlanCode[]).map((code) => {
@@ -482,26 +551,26 @@ export function GroupsListPage() {
                       key={code}
                       type="button"
                       onClick={() => setDesiredPlanCode(code)}
-                      className={`text-left p-3.5 rounded-xl border transition-colors ${
+                      className={`text-left p-3.5 rounded-xl border transition-all ${
                         active
-                          ? 'border-emerald-800 bg-emerald-50/70'
-                          : 'border-stone-200 hover:bg-stone-50'
+                          ? 'border-emerald-700 bg-emerald-50 ring-1 ring-emerald-600'
+                          : 'border-slate-200 hover:bg-slate-50'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
-                        <span className="font-semibold text-xs text-stone-900">{ent.label}</span>
-                        <span className="font-mono text-xs font-bold text-emerald-800">
+                        <span className="font-bold text-xs text-slate-900">{ent.label}</span>
+                        <span className="font-mono text-xs font-extrabold text-emerald-700">
                           {formatMoney(price, 'XOF')}
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-500 mt-1">{ent.tagline}</p>
+                      <p className="text-[11px] text-slate-600 mt-1">{ent.tagline}</p>
                     </button>
                   );
                 })}
               </div>
               {desiredPlanCode !== 'FREE' && (
-                <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2.5 flex items-center gap-2">
-                  <Lock className="w-3.5 h-3.5 shrink-0" />
+                <p className="text-xs text-amber-950 bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2.5 flex items-center gap-2">
+                  <Lock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                   <span>
                     Le groupe sera créé puis vous serez dirigé vers le paiement avant activation de
                     l’offre {PLAN_ENTITLEMENTS[desiredPlanCode].label}.
@@ -512,74 +581,80 @@ export function GroupsListPage() {
 
             <button
               type="submit"
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900 transition-colors"
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-700 to-teal-700 rounded-xl hover:from-emerald-800 hover:to-teal-800 transition-all shadow-xs"
             >
               {desiredPlanCode === 'FREE'
                 ? 'Créer le groupe'
                 : 'Créer le groupe et passer au paiement'}
             </button>
-          </form>
+          </motion.form>
         )}
 
         {/* Join by code */}
         <form
           onSubmit={handleJoinCode}
-          className="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+          className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shadow-xs"
         >
-          <span className="text-sm font-medium text-stone-700 shrink-0">Rejoindre via un code :</span>
+          <span className="text-sm font-semibold text-slate-800 shrink-0">Rejoindre via un code :</span>
           <input
             type="text"
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             placeholder="Ex: KPT-A1B2C3"
-            className="flex-1 px-3.5 py-2 text-sm border border-stone-300 rounded-xl font-mono"
+            className="flex-1 px-3.5 py-2 text-sm border border-slate-300 rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600"
           />
           <button
             type="submit"
-            className="px-4 py-2 text-sm font-semibold text-stone-800 border border-stone-300 rounded-xl hover:bg-stone-50 whitespace-nowrap"
+            className="px-4 py-2 text-sm font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-xl hover:bg-emerald-100 whitespace-nowrap transition-colors"
           >
             Rejoindre
           </button>
         </form>
 
         {loading ? (
-          <div className="h-40 rounded-2xl bg-white border border-stone-200 animate-pulse" />
+          <div className="h-40 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-sm text-slate-500">
+            Chargement de vos groupes...
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {groups.map((g) => (
-              <div
+            {groups.map((g, idx) => (
+              <motion.div
                 key={g.id}
-                className="bg-white border border-stone-200 rounded-2xl p-6 hover:border-emerald-800 transition-colors flex flex-col justify-between space-y-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.22, delay: idx * 0.04 }}
+                whileHover={{ y: -3 }}
+                className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between space-y-4"
               >
                 <Link to={`/app/groups/${g.id}`} className="space-y-2 block">
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs font-semibold text-emerald-700">
                     {GROUP_TYPES.find((t) => t.value === g.type)?.label || g.type} ·{' '}
                     {GROUP_ROLE_LABELS[g.myRole as GroupRole] || g.myRole} · Plan {g.planCode}
                   </p>
-                  <h3 className="font-display text-lg font-bold text-stone-900">{g.name}</h3>
-                  {g.description && <p className="text-xs text-stone-600 line-clamp-2">{g.description}</p>}
+                  <h3 className="font-display text-lg font-extrabold text-slate-900">{g.name}</h3>
+                  {g.description && <p className="text-xs text-slate-600 line-clamp-2">{g.description}</p>}
                 </Link>
-                <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs gap-2">
-                  <span className="flex items-center gap-1 text-stone-600">
-                    <Users className="w-3.5 h-3.5" />
-                    <span className="font-mono">{g.membersCount}</span> membres
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs gap-2">
+                  <span className="flex items-center gap-1 text-slate-600 font-medium">
+                    <Users className="w-3.5 h-3.5 text-emerald-700" />
+                    <span className="font-mono font-bold text-slate-800">{g.membersCount}</span> membres
                   </span>
                   <div className="flex items-center gap-3">
                     {(g.myRole === 'OWNER' || g.myRole === 'ADMIN') && g.planCode === 'FREE' && (
                       <Link
                         to={`/app/abonnement?plan=PREMIUM&groupId=${g.id}`}
-                        className="inline-flex items-center gap-1 text-emerald-800 font-semibold hover:underline"
+                        className="inline-flex items-center gap-1 text-amber-700 font-bold hover:underline"
                       >
                         <CreditCard className="w-3 h-3" />
                         <span>Offres</span>
                       </Link>
                     )}
-                    <span className="font-mono font-semibold text-stone-900 tabular-nums">
+                    <span className="font-mono font-bold text-slate-900 tabular-nums">
                       {formatMoney(g.totalExpensesInt, g.currency)}
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
@@ -623,9 +698,11 @@ export function InvitationsPage() {
   return (
     <AppShell title="Invitations reçues" subtitle="Acceptez ou refusez les invitations aux groupes KPATA">
       {loading ? (
-        <div className="h-32 bg-white border border-stone-200 rounded-2xl animate-pulse" />
+        <div className="h-32 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-sm text-slate-500">
+          Chargement des invitations...
+        </div>
       ) : invitations.length === 0 ? (
-        <div className="bg-white border border-stone-200 rounded-2xl p-8 text-center text-sm text-stone-600">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-600 shadow-xs">
           Aucune invitation en attente pour votre adresse e-mail.
         </div>
       ) : (
@@ -633,13 +710,13 @@ export function InvitationsPage() {
           {invitations.map((inv) => (
             <div
               key={inv.id}
-              className="bg-white border border-stone-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
             >
               <div>
-                <p className="font-display font-bold text-stone-900">{inv.groupName}</p>
-                <p className="text-xs text-stone-500">
+                <p className="font-display font-bold text-slate-900">{inv.groupName}</p>
+                <p className="text-xs text-slate-500">
                   Rôle proposé : {GROUP_ROLE_LABELS[inv.role as GroupRole] || inv.role} · Code :{' '}
-                  <span className="font-mono">{inv.code}</span> · Statut : {inv.status}
+                  <span className="font-mono font-semibold">{inv.code}</span> · Statut : {inv.status}
                 </p>
               </div>
               {inv.status === 'PENDING' && (
@@ -647,14 +724,14 @@ export function InvitationsPage() {
                   <button
                     type="button"
                     onClick={() => act(inv.token, 'accept')}
-                    className="px-4 py-2 text-xs font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900"
+                    className="px-4 py-2 text-xs font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800"
                   >
                     Accepter
                   </button>
                   <button
                     type="button"
                     onClick={() => act(inv.token, 'reject')}
-                    className="px-4 py-2 text-xs font-medium text-stone-700 border border-stone-300 rounded-xl hover:bg-stone-50"
+                    className="px-4 py-2 text-xs font-medium text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50"
                   >
                     Refuser
                   </button>
@@ -719,32 +796,34 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={markAll}
-          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-stone-300 bg-white rounded-xl hover:bg-stone-50"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold border border-slate-300 bg-white rounded-xl hover:bg-slate-50"
         >
-          <Check className="w-3.5 h-3.5" />
+          <Check className="w-3.5 h-3.5 text-emerald-700" />
           <span>Tout marquer lu</span>
         </button>
       }
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white border border-stone-200 rounded-2xl divide-y divide-stone-100">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100 shadow-xs">
           {notifications.length === 0 ? (
-            <p className="p-8 text-center text-sm text-stone-500">Aucune notification.</p>
+            <p className="p-8 text-center text-sm text-slate-500">Aucune notification.</p>
           ) : (
             notifications.map((n) => (
               <div key={n.id} className="p-4 flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <p className={`text-sm ${n.isRead ? 'text-stone-600' : 'font-semibold text-stone-900'}`}>
+                  <p className={`text-sm ${n.isRead ? 'text-slate-600' : 'font-bold text-slate-900'}`}>
                     {n.title}
                   </p>
-                  <p className="text-xs text-stone-500">{n.body}</p>
-                  <p className="text-[11px] font-mono text-stone-400">{n.createdAt.slice(0, 16).replace('T', ' ')}</p>
+                  <p className="text-xs text-slate-600">{n.body}</p>
+                  <p className="text-[11px] font-mono text-slate-400">
+                    {n.createdAt.slice(0, 16).replace('T', ' ')}
+                  </p>
                 </div>
                 {!n.isRead && (
                   <button
                     type="button"
                     onClick={() => markRead(n.id)}
-                    className="text-xs font-semibold text-emerald-800 hover:underline shrink-0"
+                    className="text-xs font-bold text-emerald-700 hover:underline shrink-0"
                   >
                     Marquer lu
                   </button>
@@ -754,10 +833,10 @@ export function NotificationsPage() {
           )}
         </div>
 
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 space-y-4 h-fit">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 h-fit shadow-xs">
           <div className="flex items-center gap-2">
-            <Bell className="w-4 h-4 text-emerald-800" />
-            <h2 className="font-display font-bold text-stone-900 text-sm">Canaux de notification</h2>
+            <Bell className="w-4 h-4 text-emerald-700" />
+            <h2 className="font-display font-bold text-slate-900 text-sm">Canaux de notification</h2>
           </div>
           <div className="space-y-2.5 text-sm">
             {[
@@ -768,12 +847,12 @@ export function NotificationsPage() {
               { key: 'whatsapp', label: 'WhatsApp officiel (évolution)' },
             ].map((item) => (
               <label key={item.key} className="flex items-center justify-between gap-3 cursor-pointer">
-                <span className="text-stone-700 text-xs">{item.label}</span>
+                <span className="text-slate-700 text-xs">{item.label}</span>
                 <input
                   type="checkbox"
                   checked={(prefs as any)[item.key]}
                   onChange={(e) => savePrefs({ ...prefs, [item.key]: e.target.checked })}
-                  className="rounded border-stone-300 text-emerald-800 focus:ring-emerald-700"
+                  className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-600"
                 />
               </label>
             ))}
@@ -833,50 +912,65 @@ export function AccountPage() {
   return (
     <AppShell title="Mon compte & Sécurité" subtitle="Profil utilisateur, mot de passe et gestion des sessions actives">
       <div className="space-y-6 max-w-3xl">
+        {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-[#042F24] to-[#064E3B] text-white flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-sm">
+              <ShieldCheck className="w-5 h-5 text-amber-300 shrink-0" />
+              <span>Vous disposez des droits Administrateur Principal ({user.role}).</span>
+            </div>
+            <Link
+              to="/admin"
+              className="px-3.5 py-2 text-xs font-bold text-slate-950 bg-amber-400 rounded-xl hover:bg-amber-300 shrink-0"
+            >
+              Ouvrir /admin
+            </Link>
+          </div>
+        )}
+
         {msg && (
-          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-900">
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-900">
             {msg}
           </div>
         )}
 
-        <form onSubmit={saveProfile} className="bg-white border border-stone-200 rounded-2xl p-6 space-y-4">
-          <h2 className="font-display font-bold text-stone-900">Informations personnelles</h2>
+        <form onSubmit={saveProfile} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+          <h2 className="font-display font-bold text-slate-900">Informations personnelles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Prénom</span>
+              <span className="font-medium text-slate-700">Prénom</span>
               <input
                 type="text"
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Nom</span>
+              <span className="font-medium text-slate-700">Nom</span>
               <input
                 type="text"
                 required
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Téléphone</span>
+              <span className="font-medium text-slate-700">Téléphone</span>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Langue de l’interface</span>
+              <span className="font-medium text-slate-700">Langue de l’interface</span>
               <select
                 value={preferredLang}
                 onChange={(e) => setPreferredLang(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl bg-white"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white"
               >
                 <option value="fr">Français</option>
                 <option value="en">English (architecture prête)</option>
@@ -885,67 +979,65 @@ export function AccountPage() {
           </div>
           <button
             type="submit"
-            className="px-4 py-2 text-sm font-semibold text-white bg-emerald-800 rounded-xl hover:bg-emerald-900"
+            className="px-4 py-2 text-sm font-semibold text-white bg-emerald-700 rounded-xl hover:bg-emerald-800"
           >
             Enregistrer le profil
           </button>
         </form>
 
-        <form onSubmit={changePassword} className="bg-white border border-stone-200 rounded-2xl p-6 space-y-4">
-          <h2 className="font-display font-bold text-stone-900">Modifier le mot de passe</h2>
+        <form onSubmit={changePassword} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+          <h2 className="font-display font-bold text-slate-900">Modifier le mot de passe</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Mot de passe actuel</span>
-              <input
-                type="password"
+              <span className="font-medium text-slate-700">Mot de passe actuel</span>
+              <PasswordInput
                 required
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span className="font-medium text-stone-700">Nouveau mot de passe</span>
-              <input
-                type="password"
+              <span className="font-medium text-slate-700">Nouveau mot de passe</span>
+              <PasswordInput
                 required
                 minLength={8}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3.5 py-2 border border-stone-300 rounded-xl"
+                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </label>
           </div>
           <button
             type="submit"
-            className="px-4 py-2 text-sm font-semibold text-stone-800 border border-stone-300 rounded-xl hover:bg-stone-50"
+            className="px-4 py-2 text-sm font-semibold text-slate-800 border border-slate-300 rounded-xl hover:bg-slate-50"
           >
             Mettre à jour le mot de passe
           </button>
         </form>
 
-        <div className="bg-white border border-stone-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <h2 className="font-display font-bold text-stone-900">Sessions actives</h2>
-            <button type="button" onClick={loadSessions} className="text-xs text-stone-600 flex items-center gap-1">
+            <h2 className="font-display font-bold text-slate-900">Sessions actives</h2>
+            <button type="button" onClick={loadSessions} className="text-xs text-slate-600 flex items-center gap-1">
               <RefreshCw className="w-3.5 h-3.5" /> Actualiser
             </button>
           </div>
-          <div className="divide-y divide-stone-100">
+          <div className="divide-y divide-slate-100">
             {sessions.map((s) => (
               <div key={s.id} className="py-2.5 flex items-center justify-between gap-4 text-xs">
                 <div className="min-w-0">
-                  <p className="font-medium text-stone-800 truncate">
+                  <p className="font-medium text-slate-800 truncate">
                     {s.current ? 'Session actuelle · ' : ''}
                     {s.userAgent || 'Navigateur'}
                   </p>
-                  <p className="font-mono text-stone-400">Expire : {s.expiresAt.slice(0, 10)}</p>
+                  <p className="font-mono text-slate-400">Expire : {s.expiresAt.slice(0, 10)}</p>
                 </div>
                 {!s.current && (
                   <button
                     type="button"
                     onClick={() => revokeSession(s.id)}
-                    className="text-red-700 hover:underline flex items-center gap-1 shrink-0"
+                    className="text-rose-700 hover:underline flex items-center gap-1 shrink-0"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Révoquer
                   </button>

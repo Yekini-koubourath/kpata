@@ -53,7 +53,7 @@ export const PUBLIC_SEO_PAGES: PublicPageSeo[] = [
     path: '/contact',
     title: 'Contact et accompagnement — KPATA Bénin & Afrique de l’Ouest',
     description:
-      'Contactez l’équipe KPATA à Cotonou pour vos questions, partenariats associatifs ou retours utilisateurs.',
+      'Contactez l’équipe KPATA à Abomey-Calavi (yekinikoubou@gmail.com · 0150495832) pour vos questions, partenariats associatifs ou retours utilisateurs.',
     priority: '0.7',
     changefreq: 'monthly',
   },
@@ -205,6 +205,13 @@ export function injectSeoIntoHtml(html: string, req: Request): { html: string; i
           '@type': 'Organization',
           name: 'KPATA',
           url: origin,
+          email: 'yekinikoubou@gmail.com',
+          telephone: '+2290150495832',
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Abomey-Calavi',
+            addressCountry: 'BJ',
+          },
           areaServed: 'BJ',
         },
       })}</script>`
